@@ -6,3 +6,5 @@ Feature: Heatmap
     Given I am on the home page
     When protein 1csp is selected
     Then the heatmap for that protein is displayed
+
+  Scenario: doesn't display if one is not selected

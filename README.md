@@ -8,9 +8,7 @@ An online tool used to provide researchers easy access to protein mutation data.
 
 `cd client`
 
-`npm run cucumber`
-
-`npm run test`
+`npm test`
 
 ## Server Tests
 

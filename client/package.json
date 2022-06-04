@@ -18,7 +18,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "cucumber": "npx cucumber-js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
