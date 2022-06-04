@@ -14,12 +14,32 @@ defineFeature(feature, (test) => {
       // Simulate card click
       fireEvent.click(screen.getByTestId("1csp"));
       // Check that url changed
-      expect(window.location.href).toBe("https://protein-mutations/proteins/1csp");
+      expect(window.location.href).toBe("https://protein-mutations.com/proteins/1csp");
     });
 
     then("the heatmap for that protein is displayed", () => {
       // Later will be testing components of whatever graph library is being used
-      expect(screen.findByAltText("1scp heatmap").src).toContain("heatmap");
+      expect(screen.queryByAltText("1scp heatmap").src).toContain("heatmap");
+    });
+  });
+
+  test("Heatmap doesn't display if there is no data for it in the database", ({
+    given,
+    when,
+    then,
+  }) => {
+    given("I am on the home page and protein 3kis does not have data", () => {
+      expect(window.location.href).toBe("https://protein-mutations.com");
+      render(<App proteins={[{ name: "3kis", data: null }]} />);
+    });
+
+    when("protein 3kis is selected", () => {
+      fireEvent.click(screen.getByTestId("1csp"));
+    });
+
+    then("no heatmap will be displayed on the new page", () => {
+      expect(window.location.href).toBe("https://protein-mutations.com");
+      expect(screen.queryByAltText("1scp heatmap")).toBeNull();
     });
   });
 });

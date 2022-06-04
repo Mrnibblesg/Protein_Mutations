@@ -7,4 +7,7 @@ Feature: Heatmap
     When protein 1csp is selected
     Then the heatmap for that protein is displayed
 
-  Scenario: doesn't display if one is not selected
+  Scenario: Heatmap doesn't display if there is no data for it in the database
+    Given I am on the home page and protein 3kis does not have data
+    When protein 3kis is selected
+    Then no heatmap will be displayed on the new page
