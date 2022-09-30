@@ -1,19 +1,30 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import { styled } from "@mui/system";
 import React from "react";
+import { Link } from "react-router-dom";
+
+const NavButton = styled(({ link, ...other }) => <Button component={Link} to={link} {...other} />)(
+  ({ theme }) => ({
+    color: "white",
+    textTransform: "none",
+    ...theme.typography.h4,
+    padding: theme.spacing(0, 5),
+  })
+);
 
 export default function NavBar() {
   return (
     <AppBar>
-      <Toolbar style={{ justifyContent: "space-around" }}>
+      <Toolbar style={{ justifyContent: "space-between" }}>
         <Typography variant="h3" component="h1">
           Protein Mutations
         </Typography>
-        {/* <Box display="flex"> */}
-        <Button color="secondary">Dashboard</Button>
-        <Typography variant="h4" component="h3">
-          <Button>Info</Button>
-        </Typography>
-        {/* </Box> */}
+        <Box display="flex">
+          <NavButton color="primary" link="/">
+            Dashboard
+          </NavButton>
+          <NavButton link="/info">Info</NavButton>
+        </Box>
       </Toolbar>
     </AppBar>
   );
