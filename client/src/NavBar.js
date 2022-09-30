@@ -1,7 +1,7 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 const NavButton = styled(({ link, ...other }) => <Button component={Link} to={link} {...other} />)(
   ({ theme }) => ({
@@ -14,18 +14,21 @@ const NavButton = styled(({ link, ...other }) => <Button component={Link} to={li
 
 export default function NavBar() {
   return (
-    <AppBar>
-      <Toolbar style={{ justifyContent: "space-between" }}>
-        <Typography variant="h3" component="h1">
-          Protein Mutations
-        </Typography>
-        <Box display="flex">
-          <NavButton color="primary" link="/">
-            Dashboard
-          </NavButton>
-          <NavButton link="/info">Info</NavButton>
-        </Box>
-      </Toolbar>
-    </AppBar>
+    <>
+      <AppBar position="relative">
+        <Toolbar style={{ justifyContent: "space-between" }}>
+          <Typography variant="h3" component="h1">
+            Protein Mutations
+          </Typography>
+          <Box display="flex">
+            <NavButton color="primary" link="/">
+              Dashboard
+            </NavButton>
+            <NavButton link="info">Info</NavButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Outlet />
+    </>
   );
 }

@@ -1,25 +1,24 @@
-import { useState } from "react";
 import { TextField, ThemeProvider } from "@mui/material";
 import "./App.css";
 import NavBar from "./NavBar";
 import Dashboard from "./Dashboard";
 import theme from "./theme";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Info from "./Info";
 
 function App() {
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
-        <BrowserRouter>
+        <Router>
           <Routes>
-            <Route path="/" element={<NavBar />}>
+            <Route path="" element={<NavBar />}>
               <Route index element={<Dashboard />} />
-              {/* Add route for proteins */}
-              <Route path="/info" element={<Info />} />
+              <Route path="info" element={<Info />} />
+              {/* Add route for individual proteins */}
             </Route>
           </Routes>
-        </BrowserRouter>
+        </Router>
       </ThemeProvider>
     </div>
   );
