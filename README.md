@@ -2,6 +2,14 @@
 
 An online tool used to provide researchers easy access to protein mutation data.
 
+# Running instructions
+
+In two different command lines:
+
+In the first, type `cd client`, then `npm start`
+
+In the second, type `cd server`, then `nodemon`
+
 # Testing Instructions
 
 ## Client Tests
