@@ -3,15 +3,15 @@ import React from "react";
 //TODO: Move inline CSS into external CSS file.
 function ContactInfo(){
 	return (
-		<footer style={{
+		<footer title='ContactInfo' style={{
 				marginTop: '100px',
 				fontSize: '30px'
 				}}>
 		<h2>Contact Information</h2>
-		Filip Jagodzinski<br />
-		Associate Professor<br />
-		Department Chair, <a href="https://cs.wwu.edu/">WWU Comp Sci.</a><br />
-		filip[.]jagodzinski[at]wwu.edu<br />
+		Filip Jagodzinski<br/>
+		Associate Professor<br/>
+		Department Chair, <a href="https://cs.wwu.edu/">WWU Comp Sci.</a><br/>
+		filip[.]jagodzinski[at]wwu.edu<br/>
 		</footer>
 	);
 }
@@ -20,7 +20,7 @@ export default function References() {
 	let link1 = 'https://ieeebibm.org/BIBM2021/';
 	
   return (
-	<div style={{
+	<div title='References' style={{
 		paddingLeft: '20%',
 		paddingRight: '20%',
 	}}>
