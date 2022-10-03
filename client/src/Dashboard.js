@@ -1,16 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import ProteinCard from "./ProteinCard";
 import SearchIcon from "@mui/icons-material/Search";
+import axios from "axios";
 
 export default function Dashboard() {
   const [search, setSearch] = useState("");
-  const singleIndels = ["1l2y", "2nd8", "85ao", "9jn2"];
-  const pairwiseIndels = ["n9m1", "n90a", "is61"];
+  const [singleIndels, setSingleIndels] = useState([]);
+  const pairwiseIndels = [{ name: "n9m1" }, { name: "n90a" }, { name: "is61" }];
 
-  const filter = (string) => {
+  // Retrieve data from database
+  useEffect(() => {
+    const getProteinNames = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/protein-names");
+        setSingleIndels(response.data);
+      } catch (error) {
+        console.error(error);
+        // Notify the user somehow
+      }
+    };
+
+    getProteinNames();
+  }, []);
+
+  const filter = (protein) => {
     // Use toLowerCase to make the search case-insensitive
-    return string.toLowerCase().includes(search.toLowerCase());
+    return protein.name.toLowerCase().includes(search.toLowerCase());
   };
 
   const filteredSingle = singleIndels.filter(filter);
@@ -43,8 +59,8 @@ export default function Dashboard() {
         </Typography>
         <Grid container spacing={2} justifyContent="flex-start">
           {filteredSingle.map((protein) => (
-            <Grid key={protein} item xs={4}>
-              <ProteinCard name={protein} />
+            <Grid key={protein.name} item xs={4}>
+              <ProteinCard name={protein.name} />
             </Grid>
           ))}
         </Grid>
@@ -53,8 +69,8 @@ export default function Dashboard() {
         </Typography>
         <Grid container spacing={2} justifyContent="flex-start">
           {filteredPairwise.map((protein) => (
-            <Grid key={protein} item xs={4}>
-              <ProteinCard name={protein} />
+            <Grid key={protein.name} item xs={4}>
+              <ProteinCard name={protein.name} />
             </Grid>
           ))}
         </Grid>

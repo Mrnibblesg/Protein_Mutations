@@ -6,7 +6,6 @@ const router = express.Router();
 router.get("/protein-names", (req, res) => {
   Protein.find({}, "name")
     .then((proteins) => {
-      console.log(proteins);
       res.status(200).send(proteins);
     })
     .catch((error) => {
