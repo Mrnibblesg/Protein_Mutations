@@ -1,9 +1,20 @@
+import { Card, CardActionArea, CardContent, Typography } from "@mui/material";
 import React from "react";
 
 // A card on the home screen detailing a single protein, and basic details
 // When clicked, it should navigate to the heatmap visualizer
-function ProteinCard({ data }) {
-  return <div>ProteinCard</div>;
+function ProteinCard({ name }) {
+  return (
+    <Card data-testid="protein-card">
+      <CardActionArea>
+        <CardContent>
+          <Typography variant="h5" component="div">
+            {name}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  );
 }
 
 export default ProteinCard;
