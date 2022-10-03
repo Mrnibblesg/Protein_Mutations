@@ -1,15 +1,25 @@
+import mongoose from "mongoose"
 import express from "express";
+import singleprotein from "./routes/singleprotein.js"
 const app = express();
 const port = 8080;
 
-app.get("/", (req, res) => {
-  res.send("What's up");
-});
+app.use(express.json())
+app.use("/api",singleprotein)
 
-app.get("/api/test", (req, res) => {
-  res.send("This is different");
-});
+mongoose.connect(
+  `mongodb+srv://AdminDB:csci492@cluster0.wj1zjhz.mongodb.net/?retryWrites=true&w=majority`, 
+  {
+  }
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+).then(() => {
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
+}).catch((error) => {
+  console.error(error)
+})
+
+
+
+
