@@ -5,6 +5,7 @@ import Dashboard from "./Dashboard";
 import theme from "./theme";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Info from "./Info";
+import References from "./References";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
           <Routes>
             <Route path="" element={<NavBar />}>
               <Route index element={<Dashboard />} />
-              <Route path="info" element={<Info />} />
+              <Route path="info" element={<div><Info /> <References /> </div>} />
               {/* Add route for individual proteins */}
             </Route>
           </Routes>
