@@ -6,7 +6,7 @@ import theme from "./theme";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Info from "./Info";
 import References from "./References";
-import ProteinPage from "./ProteinPage";
+import ProteinPage from "./Protein/ProteinPage";
 
 function App() {
   return (
