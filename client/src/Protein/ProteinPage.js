@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { Box, Button, FormControlLabel, Grid, Radio, RadioGroup, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import AminoAcidDropdown from "./AminoAcidDropdown";
+import { useNavigate } from "react-router-dom";
 
 const GridItem = styled((props) => <Grid item {...props} />, {
   shouldForwardProp: (prop) => prop !== "position",
@@ -24,7 +25,7 @@ const IndexButton = styled(({ index, toggled, handleClick, ...other }) => {
 }));
 
 const CHAIN_LENGTH = 20;
-export default function ProteinPage({ id }) {
+export default function ProteinPage({ name }) {
   const createFalseArray = (size) => new Array(size).fill(false);
   // Add 2 to length since insert adds two new elements
   const [insertIndices, setInsertIndices] = useState(createFalseArray(CHAIN_LENGTH + 2));
@@ -33,6 +34,7 @@ export default function ProteinPage({ id }) {
   const [firstInsert, setFirstInsert] = useState("");
   const [secondInsert, setSecondInsert] = useState("");
   const [showHeatmap, setShowHeatmap] = useState("");
+  const navigate = useNavigate();
 
   // Abstraction based on mode selected so don't need ternary everywhere
   const indices = mode === "insert" ? insertIndices : deleteIndices;
@@ -98,14 +100,16 @@ export default function ProteinPage({ id }) {
     <Container sx={{ my: 6 }}>
       <Grid container>
         <GridItem xs position="start">
-          <Button variant="outlined">Back</Button>
+          <Button variant="outlined" onClick={() => navigate(-1)}>
+            Back
+          </Button>
           <Button variant="contained" onClick={handleClear}>
             Clear
           </Button>
         </GridItem>
         <GridItem xs={8} position="center">
           <Typography variant="h4" gutterBottom>
-            Protein Name
+            {name.toUpperCase()}
           </Typography>
           <RadioGroup
             value={mode}

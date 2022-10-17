@@ -6,7 +6,7 @@ import theme from "./theme";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Info from "./Info";
 import References from "./References";
-import ProteinPageLayout from "./ProteinPageLayout";
+import ProteinPage from "./Protein/ProteinPage";
 
 function App() {
   //TODO: Get protein data from server.
@@ -29,7 +29,7 @@ function App() {
               {
                 //Generate routes from proteins
                 proteins.map((name) => {
-                  return <Route path={name} element={ProteinPageLayout(name)} />;
+                  return <Route path={name} element={<ProteinPage name={name} />} />;
                 })
               }
             </Route>
