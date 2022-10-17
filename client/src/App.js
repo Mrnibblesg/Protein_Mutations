@@ -10,6 +10,7 @@ import ProteinPageLayout from "./ProteinPageLayout";
 
 
 function App() {
+  //TODO: Get protein data from server.
   const proteins = ["n9m1", "n90a", "is61"];
   return (
     <div className="App">
@@ -19,7 +20,9 @@ function App() {
             <Route path="" element={<NavBar />}>
               <Route index element={<Dashboard />} />
               <Route path="info" element={<div><Info /> <References /> </div>} />
-              {proteins.map((name) => {
+              {
+                //Generate routes from proteins
+                proteins.map((name) => {
                   return <Route path={name} element={ProteinPageLayout(name)} />
               })}
             </Route>
