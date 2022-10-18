@@ -55,7 +55,7 @@ export default function Dashboard() {
           sx={{ width: 300, mb: 4 }}
         />
         <Typography variant="h4" component="h2" gutterBottom textAlign="left">
-          Single Indel
+          Single InDel
         </Typography>
         <Grid container spacing={2} justifyContent="flex-start">
           {filteredSingle.map((protein) => (
@@ -65,7 +65,7 @@ export default function Dashboard() {
           ))}
         </Grid>
         <Typography variant="h4" component="h2" gutterBottom textAlign="left" sx={{ mt: 4 }}>
-          Pairwise Indel
+          Pairwise InDel
         </Typography>
         <Grid container spacing={2} justifyContent="flex-start">
           {filteredPairwise.map((protein) => (
