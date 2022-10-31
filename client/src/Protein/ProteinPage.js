@@ -1,10 +1,11 @@
-import React, { useState, createRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "@emotion/styled";
 import { Box, Button, FormControlLabel, Grid, Radio, RadioGroup, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import AminoAcidDropdown from "./AminoAcidDropdown";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import createMolstarViewer from "../molstar-viewer/molstar";
 
 const GridItem = styled((props) => <Grid item {...props} />, {
   shouldForwardProp: (prop) => prop !== "position",
@@ -35,7 +36,7 @@ export default function ProteinPage({ pdb_id, residue_count, type }) {
   const [secondInsert, setSecondInsert] = useState("");
   const [showMolstar, setShowMolstar] = useState(false);
   const [molstarViewer, setMolstarViewer] = useState();
-  const molstarRef = createRef();
+  const molstarRef = useRef();
   const [mutant, setMutant] = useState();
   const navigate = useNavigate();
 
@@ -73,20 +74,22 @@ export default function ProteinPage({ pdb_id, residue_count, type }) {
           },
         }
       );
-      console.log(response.data);
-      const viewer = await window.createMolstarViewer(
-        document.getElementById("molstar"),
-        response.data.pdb_data.pdb
-      );
-      // const viewer = 2;
-      viewer.setMutant(response.data);
-      setMolstarViewer(viewer);
-      console.log("Here");
+      // const viewer = await createMolstarViewer(molstarRef.current, response.data.pdb_data.pdb);
+      // console.log(response.data);
+      setMutant(response.data);
+      // setMolstarViewer(viewer);
     } catch (error) {
       console.error(error);
       // TODO: Notify user
     }
   };
+
+  useEffect(() => {
+    const run = async () => {
+      await createMolstarViewer(molstarRef.current, mutant.pdb_data.pdb);
+    };
+    run();
+  }, [mutant]);
 
   // Count selected buttons (true is 1, false is 0 in js)
   const selectedCount = (() => {
@@ -141,7 +144,7 @@ export default function ProteinPage({ pdb_id, residue_count, type }) {
   };
 
   const handleApply = async () => {
-    if (firstInsert && secondInsert && selectedCount === 2) {
+    if (selectedCount === 2) {
       await getMutant();
     }
   };
@@ -204,7 +207,8 @@ export default function ProteinPage({ pdb_id, residue_count, type }) {
           />
         ))}
       </Box>
-      {showMolstar && <Box mt={7} ref={molstarRef} id="molstar"></Box>}
+      {showMolstar && <Box mt={7}></Box>}
+      <div ref={molstarRef} id="molstar"></div>
     </Container>
   );
 }

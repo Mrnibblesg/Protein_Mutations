@@ -28,18 +28,6 @@ function App() {
     getProteinNames();
   }, []);
 
-  useEffect(() => {
-    const script = document.createElement("script");
-
-    script.src = "./molstar-viewer/molstar.min.js";
-    script.async = true;
-
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
   return (
     <div className="App">
       <ThemeProvider theme={theme}>

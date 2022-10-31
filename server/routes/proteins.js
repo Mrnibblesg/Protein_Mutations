@@ -25,14 +25,13 @@ router.post("/get-mutant", (req, res) => {
       `/${pdb_id}\/${mode}\/${firstIndex}\/${firstResidue}\/${secondIndex}\/${secondResidue}/`
     );
   } else if (mode === "del") {
-    path = new RegExp(`/\/${pdb_id}\/${mode}\/${firstIndex}\/${secondIndex}\//`);
+    path = new RegExp(`/${pdb_id}\/${mode}\/${firstIndex}\/${secondIndex}/`);
   } else {
     console.error("Mode not provided");
     return res.status(500).send("Mode not provided");
   }
   Pairwise.findOne({ path })
     .then((protein) => {
-      console.log(protein);
       res.status(200).json(protein);
     })
     .catch((error) => {
