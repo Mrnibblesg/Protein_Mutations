@@ -1,13 +1,20 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-const SingleProteinSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    
-    // More attributes to be added after demo
+const ProteinSchema = new mongoose.Schema({
+  pdb_id: {
+    type: String,
+    required: true,
+  },
+  type: {
+    type: String,
+    required: true,
+  },
+  residue_count: {
+    type: Number,
+    required: true,
+  },
+  // Residue list?
 });
 
-const protein = mongoose.model("SingleProtein", SingleProteinSchema, "SingleProteins");
-export default protein
+const protein = mongoose.model("Protein", ProteinSchema, "Proteins");
+export default protein;

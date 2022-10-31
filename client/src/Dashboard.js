@@ -4,33 +4,17 @@ import ProteinCard from "./ProteinCard";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
 
-export default function Dashboard() {
+export default function Dashboard({ proteins }) {
   const [search, setSearch] = useState("");
-  const [singleIndels, setSingleIndels] = useState([]);
-  const pairwiseIndels = [{ name: "n9m1" }, { name: "n90a" }, { name: "is61" }];
 
-  // Retrieve data from database
-  useEffect(() => {
-    const getProteinNames = async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/api/protein-names");
-        setSingleIndels(response.data);
-      } catch (error) {
-        console.error(error);
-        // Notify the user somehow
-      }
-    };
-
-    getProteinNames();
-  }, []);
-
-  const filter = (protein) => {
+  const searchFilter = (protein) => {
     // Use toLowerCase to make the search case-insensitive
-    return protein.name.toLowerCase().includes(search.toLowerCase());
+    return protein.pdb_id.toLowerCase().includes(search.toLowerCase());
   };
 
-  const filteredSingle = singleIndels.filter(filter);
-  const filteredPairwise = pairwiseIndels.filter(filter);
+  // const filteredSingle = singleIndels.filter(searchFilter);
+  // const filteredPairwise = pairwiseIndels.filter(searchFilter);
+  const filteredProteins = proteins.filter(searchFilter);
 
   const handleChange = (e) => {
     setSearch(e.target.value);
@@ -54,7 +38,7 @@ export default function Dashboard() {
           inputProps={{ "data-testid": "search-field" }}
           sx={{ width: 300, mb: 4 }}
         />
-        <Typography variant="h4" component="h2" gutterBottom textAlign="left">
+        {/* <Typography variant="h4" component="h2" gutterBottom textAlign="left">
           Single InDel
         </Typography>
         <Grid container spacing={2} justifyContent="flex-start">
@@ -63,14 +47,14 @@ export default function Dashboard() {
               <ProteinCard name={protein.name} />
             </Grid>
           ))}
-        </Grid>
+        </Grid> */}
         <Typography variant="h4" component="h2" gutterBottom textAlign="left" sx={{ mt: 4 }}>
-          Pairwise InDel
+          Pairwise InDels
         </Typography>
         <Grid container spacing={2} justifyContent="flex-start">
-          {filteredPairwise.map((protein) => (
-            <Grid key={protein.name} item xs={4}>
-              <ProteinCard name={protein.name} />
+          {filteredProteins.map((protein) => (
+            <Grid key={protein.pdb_id} item xs={4}>
+              <ProteinCard protein={protein} />
             </Grid>
           ))}
         </Grid>
