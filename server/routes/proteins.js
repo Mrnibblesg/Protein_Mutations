@@ -17,23 +17,23 @@ router.get("/get-basic-proteins", (req, res) => {
 });
 
 // Currently only works for pairwise
-router.get("/get-mutant", (req, res) => {
+router.post("/get-mutant", (req, res) => {
   const { pdb_id, mode, firstIndex, secondIndex, firstResidue, secondResidue } = req.body;
-  console.log(req.body);
   let path;
   if (mode === "ins") {
     path = new RegExp(
-      `/${pdb_id}\/${mode}\/${firstIndex}\/${firstResidue}${secondIndex}\/${secondResidue}\//`
+      `/${pdb_id}\/${mode}\/${firstIndex}\/${firstResidue}\/${secondIndex}\/${secondResidue}/`
     );
   } else if (mode === "del") {
-    path = new RegExp(`/${pdb_id}\/${mode}\/${firstIndex}\/${secondIndex}\//`);
+    path = new RegExp(`/\/${pdb_id}\/${mode}\/${firstIndex}\/${secondIndex}\//`);
   } else {
     console.error("Mode not provided");
     return res.status(500).send("Mode not provided");
   }
   Pairwise.findOne({ path })
     .then((protein) => {
-      res.status(200).send(protein);
+      console.log(protein);
+      res.status(200).json(protein);
     })
     .catch((error) => {
       console.error(error);

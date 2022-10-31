@@ -57,20 +57,23 @@ export default function ProteinPage({ pdb_id, residue_count, type }) {
   const getMutant = async () => {
     try {
       const selected = getSelected();
-      const response = await axios.get(
+      const response = await axios.post(
         `http://localhost:8080/api/get-mutant`,
-        JSON.stringify({
+        {
           pdb_id,
           mode: mode === "insert" ? "ins" : "del",
-          firstIndex: selected[0],
-          secondIndex: selected[1],
-        }),
+          firstIndex: selected[0] + 1,
+          secondIndex: selected[1] + 1,
+          firstResidue: firstInsert,
+          secondResidue: secondInsert,
+        },
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
+      console.log(response.data);
       const viewer = await window.createMolstarViewer(
         document.getElementById("molstar"),
         response.data.pdb_data.pdb

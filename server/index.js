@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import bodyParser from "body-parser";
 import express from "express";
 import cors from "cors";
 import proteins from "./routes/proteins.js";
@@ -8,8 +7,6 @@ const port = 8080;
 
 app.use(cors());
 app.use(express.json());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api", proteins);
 
 mongoose
