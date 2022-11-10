@@ -11,7 +11,7 @@ import { StructureQueryHelper } from "molstar/lib/mol-plugin-state/helpers/struc
 const defaultSpec = DefaultPluginUISpec();
 const o = {
   layoutIsExpanded: true,
-  layoutShowControls: true,
+  layoutShowControls: false,
   layoutShowRemoteState: false,
   layoutControlsDisplay: "reactive",
   layoutShowSequence: true,
@@ -25,11 +25,11 @@ const o = {
   pickPadding: PluginConfig.General.PickPadding.defaultValue,
   enableWboit: PluginConfig.General.EnableWboit.defaultValue,
 
-  viewportShowExpand: PluginConfig.Viewport.ShowExpand.defaultValue,
-  viewportShowControls: PluginConfig.Viewport.ShowControls.defaultValue,
-  viewportShowSettings: PluginConfig.Viewport.ShowSettings.defaultValue,
-  viewportShowSelectionMode: PluginConfig.Viewport.ShowSelectionMode.defaultValue,
-  viewportShowAnimation: PluginConfig.Viewport.ShowAnimation.defaultValue,
+  viewportShowExpand: false,
+  viewportShowControls: false,
+  viewportShowSettings: false,
+  viewportShowSelectionMode: false,
+  viewportShowAnimation: false,
 };
 
 const spec = {
@@ -37,7 +37,7 @@ const spec = {
   layout: {
     initial: {
       isExpanded: false,
-      showControls: true,
+      showControls: false,
       controlsDisplay: "reactive",
       regionState: {
         bottom: "full",
@@ -63,11 +63,13 @@ const spec = {
     [PluginConfig.General.PickScale, o.pickScale],
     [PluginConfig.General.PickPadding, o.pickPadding],
     [PluginConfig.General.EnableWboit, o.enableWboit],
+    [PluginConfig.VolumeStreaming.Enabled, false],
     [PluginConfig.Viewport.ShowExpand, o.viewportShowExpand],
     [PluginConfig.Viewport.ShowControls, o.viewportShowControls],
     [PluginConfig.Viewport.ShowSettings, o.viewportShowSettings],
     [PluginConfig.Viewport.ShowSelectionMode, o.viewportShowSelectionMode],
     [PluginConfig.Viewport.ShowAnimation, o.viewportShowAnimation],
+    [PluginConfig.Viewport.ShowTrajectoryControls, false],
   ],
 };
 

@@ -88,7 +88,7 @@ export default function ProteinPage({ pdb_id, residue_count, type }) {
     const run = async () => {
       await createMolstarViewer(molstarRef.current, mutant.pdb_data.pdb);
     };
-    run();
+    mutant && run();
   }, [mutant]);
 
   // Count selected buttons (true is 1, false is 0 in js)
@@ -207,8 +207,7 @@ export default function ProteinPage({ pdb_id, residue_count, type }) {
           />
         ))}
       </Box>
-      {showMolstar && <Box mt={7}></Box>}
-      <div ref={molstarRef} id="molstar"></div>
+      <div ref={molstarRef} id="molstar" />
     </Container>
   );
 }
