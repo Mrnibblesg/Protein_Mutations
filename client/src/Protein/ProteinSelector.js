@@ -75,6 +75,7 @@ export default function ProteinSelector({ protein }) {
         protein={protein}
         handleIndexChange={handleIndexChange}
         handleResidueChange={handleResidueChange}
+        handleConfirm={handleConfirm}
       />
       <Box display="flex" flexDirection="column">
         <div ref={molstarRef} />
