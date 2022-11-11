@@ -13,6 +13,7 @@ const ProteinSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  wild_type: {},
   // Residue list?
 });
 

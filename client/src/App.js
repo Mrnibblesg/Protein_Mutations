@@ -6,9 +6,9 @@ import theme from "./theme";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Info from "./Info";
 import References from "./References";
-import ProteinPage from "./Protein/ProteinPage";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import ProteinSelector from "./Protein/ProteinSelector";
 
 function App() {
   const [proteins, setProteins] = useState([]);
@@ -50,7 +50,8 @@ function App() {
                     <Route
                       key={protein.pdb_id}
                       path={protein.pdb_id}
-                      element={<ProteinPage {...protein} />}
+                      // element={<ProteinPage {...protein} />}
+                      element={<ProteinSelector protein={protein} />}
                     />
                   );
                 })

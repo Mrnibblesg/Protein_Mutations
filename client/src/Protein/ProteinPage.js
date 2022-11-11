@@ -5,7 +5,7 @@ import { Container } from "@mui/system";
 import AminoAcidDropdown from "./AminoAcidDropdown";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import createMolstarViewer from "../molstar-viewer/molstar";
+import createMolstarViewer from "../molstar";
 
 const GridItem = styled((props) => <Grid item {...props} />, {
   shouldForwardProp: (prop) => prop !== "position",
@@ -207,7 +207,7 @@ export default function ProteinPage({ pdb_id, residue_count, type }) {
           />
         ))}
       </Box>
-      <div ref={molstarRef} id="molstar" />
+      <div ref={molstarRef} />
     </Container>
   );
 }
