@@ -2,13 +2,14 @@ import React from "react";
 import PlaceholderHeatmap from "../PlaceholderHeatmap";
 
 // Generate heatmap based on type of protein and mode
-export default function Heatmap(
+export default function Heatmap({
   protein,
   stage,
   handleIndexChange,
   handleResidueChange,
-  handleConfirm
-) {
+  handleConfirm,
+}) {
+  console.log(protein);
   // stage prop is either "index" or "residue", indicating which heatmap to display
   // ONLY FOR PAIRWISE INSERT
   // "index" indicates that the heatmap should have insert index on both axes, residues for "residue"
