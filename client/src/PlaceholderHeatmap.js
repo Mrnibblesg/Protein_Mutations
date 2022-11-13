@@ -5,8 +5,9 @@ import React from "react";
 const LENGTH = 400;
 
 export default function PlaceholderHeatmap({ residueCount }) {
+  // Random color
   const randColor = () => {
-    return "#" + (0x1000000 + Math.random() * 0xffffff).toString(16).slice(0, 6);
+    return "#" + (Math.random() * 0xff).toString(16).slice(0, 2) + "0000";
   };
 
   const cellLength = LENGTH / residueCount;
