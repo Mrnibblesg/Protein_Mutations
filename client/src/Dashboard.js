@@ -38,25 +38,29 @@ export default function Dashboard({ proteins }) {
           inputProps={{ "data-testid": "search-field" }}
           sx={{ width: 300, mb: 4 }}
         />
-        {/* <Typography variant="h4" component="h2" gutterBottom textAlign="left">
+        <Typography variant="h4" component="h2" gutterBottom textAlign="left">
           Single InDel
         </Typography>
         <Grid container spacing={2} justifyContent="flex-start">
-          {filteredSingle.map((protein) => (
-            <Grid key={protein.name} item xs={4}>
-              <ProteinCard name={protein.name} />
-            </Grid>
-          ))}
-        </Grid> */}
+          {filteredProteins
+            .filter((protein) => protein.type === "single")
+            .map((protein) => (
+              <Grid key={protein._id} item xs={4}>
+                <ProteinCard protein={protein} />
+              </Grid>
+            ))}
+        </Grid>
         <Typography variant="h4" component="h2" gutterBottom textAlign="left" sx={{ mt: 4 }}>
           Pairwise InDels
         </Typography>
         <Grid container spacing={2} justifyContent="flex-start">
-          {filteredProteins.map((protein) => (
-            <Grid key={protein.pdb_id} item xs={4}>
-              <ProteinCard protein={protein} />
-            </Grid>
-          ))}
+          {filteredProteins
+            .filter((protein) => protein.type === "pairwise")
+            .map((protein) => (
+              <Grid key={protein._id} item xs={4}>
+                <ProteinCard protein={protein} />
+              </Grid>
+            ))}
         </Grid>
       </Container>
     </div>

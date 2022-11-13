@@ -15,7 +15,7 @@ function App() {
 
   // Retrieve data from database
   useEffect(() => {
-    const getProteinNames = async () => {
+    const getProteins = async () => {
       try {
         const response = await axios.get("http://localhost:8080/api/get-basic-proteins");
         setProteins(response.data);
@@ -25,7 +25,7 @@ function App() {
       }
     };
 
-    getProteinNames();
+    getProteins();
   }, []);
 
   return (
@@ -48,8 +48,8 @@ function App() {
                 proteins.map((protein) => {
                   return (
                     <Route
-                      key={protein.pdb_id}
-                      path={protein.pdb_id}
+                      key={protein._id}
+                      path={`${protein.pdb_id}/${protein.type}`}
                       // element={<ProteinPage {...protein} />}
                       element={<ProteinSelector protein={protein} />}
                     />
