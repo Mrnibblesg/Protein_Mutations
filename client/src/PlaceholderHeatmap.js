@@ -4,7 +4,7 @@ import React from "react";
 
 export default function PlaceholderHeatmap({ xAxisCount, yAxisCount, cellSize }) {
   const randColor = () => {
-    return "#" + (0x1000000 + Math.random() * 0xffffff).toString(16).slice(0, 6);
+    return "#" + (Math.random() * 0xff).toString(16).slice(0, 2) + "0000";
   };
 
   return (
