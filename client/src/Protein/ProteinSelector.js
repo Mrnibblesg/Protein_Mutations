@@ -73,6 +73,8 @@ export default function ProteinSelector({ protein }) {
       </RadioGroup>
       <Heatmap
         protein={protein}
+        stage={"index"}
+        mode={mode}
         handleIndexChange={handleIndexChange}
         handleResidueChange={handleResidueChange}
         handleConfirm={handleConfirm}
