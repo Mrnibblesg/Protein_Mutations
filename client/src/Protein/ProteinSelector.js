@@ -63,21 +63,37 @@ export default function ProteinSelector({ protein }) {
     }
   };
 
+  // Returns true if in bounds, false if not
+  const checkBound = (index) => {
+    const upperBound = mode === "insert" ? protein.residue_count + 2 : protein.residue_count;
+    return index >= 1 && index <= upperBound;
+  };
   // Confirm navigation to next stage, locks in index/residue
   // For pairwise insert, will render ResidueSelector with new heatmap
   const handleConfirm = () => {
-    // Check index for valid input (not empty, integer within index range)
-    if (mode === "insert" && protein.type === "pairwise") {
-      // TODO: Alert user of incorrect input
-      if (index[0] < 1 || index[0] > protein.residue_count + 2) {
-        console.log("First index out of bounds or empty");
-      } else if (index[1] < 1 || index[1] > protein.residue_count + 2) {
-        console.log("Second index out of bounds or empty");
+    // Check index for valid input
+    // TODO: Alert user of incorrect input
+    // Validate pairwise proteins
+    if (protein.type === "pairwise") {
+      if (!checkBound(index[0])) {
+        return console.log("First index out of bounds or empty");
+      } else if (!checkBound(index[1])) {
+        return console.log("Second index out of bounds or empty");
       } else if (index[0] == index[1]) {
-        console.log("Indexes should not be equal");
-      } else {
-        setResidueOpen(true);
+        return console.log("Indexes should not be equal");
       }
+      // Validate single protein
+    } else if (!checkBound(index)) {
+      return console.log("Index out of bounds or empty");
+    } else if (mode === "insert" && !residue) {
+      return console.log("A residue must be selected");
+    }
+
+    // Display next stage for pairwise insert, else final stage
+    if (protein.type === "pairwise" && mode === "insert") {
+      setResidueOpen(true);
+    } else {
+      // Display mutant page, correctly order indexes
     }
   };
   const handleResidueClose = () => {
