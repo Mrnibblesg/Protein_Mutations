@@ -9,14 +9,14 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
 import ResidueSelector from "./ResidueSelector";
 import createMolstarViewer from "../molstar";
 import Heatmap from "./Heatmap";
 import ResidueDropdown from "./ResidueDropdown";
+import { useNotification } from "../NotificationContext";
 
 export default function ProteinSelector({ protein }) {
-  const navigate = useNavigate();
+  const { setNotification } = useNotification();
   const molstarRef = useRef();
   const [index, setIndex] = useState(protein.type === "single" ? "" : ["", ""]);
   const [residue, setResidue] = useState(protein.type === "single" ? "" : ["", ""]);
@@ -31,36 +31,42 @@ export default function ProteinSelector({ protein }) {
   }, [protein]);
 
   // Only pass position if pairwise
-  const handleIndexChange = (position) => (e) => {
+  const handleIndexChange = (value, position) => {
     // Handle single
     if (protein.type === "single") {
-      setIndex(e.target.value);
+      setIndex(value);
       // Handle pairwise
     } else {
       // If in position 1
       if (position) {
-        setIndex([index[0], e.target.value]);
+        setIndex([index[0], value]);
         // If in position 0
       } else {
-        setIndex([e.target.value, index[1]]);
+        setIndex([value, index[1]]);
       }
     }
   };
+  const handleIdxTextChange = (position) => (e) => {
+    handleIndexChange(e.target.value, position);
+  };
   // Only pass in position if pairwise
-  const handleResidueChange = (position) => (e) => {
+  const handleResidueChange = (value, position) => {
     // Handle single
     if (protein.type === "single") {
-      setResidue(e.target.value);
+      setResidue(value);
       // Handle pairwise
     } else {
       // If in position 1
       if (position) {
-        setResidue([residue[0], e.target.value]);
+        setResidue([residue[0], value]);
         // If in position 0
       } else {
-        setResidue([e.target.value, residue[1]]);
+        setResidue([value, residue[1]]);
       }
     }
+  };
+  const handleResTextChange = (position) => (e) => {
+    handleResidueChange(e.target.value, position);
   };
 
   // Returns true if in bounds, false if not
@@ -76,17 +82,17 @@ export default function ProteinSelector({ protein }) {
     // Validate pairwise proteins
     if (protein.type === "pairwise") {
       if (!checkBound(index[0])) {
-        return console.log("First index out of bounds or empty");
+        return setNotification("First index out of bounds or empty");
       } else if (!checkBound(index[1])) {
-        return console.log("Second index out of bounds or empty");
+        return setNotification("Second index out of bounds or empty");
       } else if (index[0] == index[1]) {
-        return console.log("Indexes should not be equal");
+        return setNotification("Indexes should not be equal");
       }
       // Validate single protein
     } else if (!checkBound(index)) {
-      return console.log("Index out of bounds or empty");
+      return setNotification("Index out of bounds or empty");
     } else if (mode === "insert" && !residue) {
-      return console.log("A residue must be selected");
+      return setNotification("A residue must be selected");
     }
 
     // Display next stage for pairwise insert, else final stage
@@ -143,7 +149,7 @@ export default function ProteinSelector({ protein }) {
             {protein.type === "single" ? (
               <TextField
                 value={index}
-                onChange={handleIndexChange(null)}
+                onChange={handleIdxTextChange(null)}
                 variant="outlined"
                 placeholder="Index"
                 sx={{ width: 130 }}
@@ -152,14 +158,14 @@ export default function ProteinSelector({ protein }) {
               <>
                 <TextField
                   value={index[0]}
-                  onChange={handleIndexChange(0)}
+                  onChange={handleIdxTextChange(0)}
                   variant="outlined"
                   placeholder="First Index"
                   sx={{ mr: 2, width: 130 }}
                 />
                 <TextField
                   value={index[1]}
-                  onChange={handleIndexChange(1)}
+                  onChange={handleIdxTextChange(1)}
                   variant="outlined"
                   placeholder="Second Index"
                   sx={{ width: 130 }}
@@ -167,7 +173,7 @@ export default function ProteinSelector({ protein }) {
               </>
             )}
             {protein.type === "single" && mode === "insert" && (
-              <ResidueDropdown value={residue} handleChange={handleResidueChange(null)} />
+              <ResidueDropdown value={residue} handleChange={handleResTextChange(null)} />
             )}
           </div>
           <Button onClick={handleConfirm} variant="contained" sx={{ mt: 3 }}>
@@ -187,7 +193,7 @@ export default function ProteinSelector({ protein }) {
         open={residueOpen}
         protein={protein}
         residue={residue}
-        handleChange={handleResidueChange}
+        handleChange={handleResTextChange}
         handleClose={handleResidueClose}
       />
     </Container>

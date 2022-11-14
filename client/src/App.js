@@ -9,9 +9,11 @@ import References from "./References";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ProteinSelector from "./Protein/ProteinSelector";
+import { Notification, NotificationContext } from "./NotificationContext";
 
 function App() {
   const [proteins, setProteins] = useState([]);
+  const [notification, setNotification] = useState(null);
 
   // Retrieve data from database
   useEffect(() => {
@@ -21,7 +23,7 @@ function App() {
         setProteins(response.data);
       } catch (error) {
         console.error(error);
-        // Notify the user somehow
+        setNotification("There was an issue retrieving proteins");
       }
     };
 
@@ -31,34 +33,37 @@ function App() {
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
-        <Router>
-          <Routes>
-            <Route path="" element={<NavBar />}>
-              <Route index element={<Dashboard proteins={proteins} />} />
-              <Route
-                path="info"
-                element={
-                  <div>
-                    <Info /> <References />{" "}
-                  </div>
+        <NotificationContext.Provider value={{ notification, setNotification }}>
+          <Router>
+            <Routes>
+              <Route path="" element={<NavBar />}>
+                <Route index element={<Dashboard proteins={proteins} />} />
+                <Route
+                  path="info"
+                  element={
+                    <div>
+                      <Info /> <References />{" "}
+                    </div>
+                  }
+                />
+                {
+                  //Generate routes from proteins
+                  proteins.map((protein) => {
+                    return (
+                      <Route
+                        key={protein._id}
+                        path={`${protein.pdb_id}/${protein.type}`}
+                        // element={<ProteinPage {...protein} />}
+                        element={<ProteinSelector protein={protein} />}
+                      />
+                    );
+                  })
                 }
-              />
-              {
-                //Generate routes from proteins
-                proteins.map((protein) => {
-                  return (
-                    <Route
-                      key={protein._id}
-                      path={`${protein.pdb_id}/${protein.type}`}
-                      // element={<ProteinPage {...protein} />}
-                      element={<ProteinSelector protein={protein} />}
-                    />
-                  );
-                })
-              }
-            </Route>
-          </Routes>
-        </Router>
+              </Route>
+            </Routes>
+          </Router>
+          <Notification />
+        </NotificationContext.Provider>
       </ThemeProvider>
     </div>
   );
