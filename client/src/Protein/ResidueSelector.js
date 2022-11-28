@@ -2,7 +2,7 @@ import { AppBar, Box, Button, Dialog, IconButton, Slide, Toolbar, Typography } f
 import { Container } from "@mui/system";
 import React from "react";
 import PlaceholderHeatmap from "../PlaceholderHeatmap";
-import Heatmap from "./Heatmap";
+import HeatmapMaker from "./HeatmapMaker";
 import ResidueDropdown from "./ResidueDropdown";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -24,7 +24,7 @@ export default function ResidueSelector({ open, protein, handleClose, residue, h
         </Toolbar>
       </AppBar>
       <Container sx={{ my: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Heatmap protein={protein} />
+        <HeatmapMaker protein={protein} />
         <Box display="flex" mt={2}>
           <ResidueDropdown
             value={residue[0]}

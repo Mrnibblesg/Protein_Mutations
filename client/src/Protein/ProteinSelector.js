@@ -12,7 +12,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import ResidueSelector from "./ResidueSelector";
 import createMolstarViewer from "../molstar";
-import Heatmap from "./Heatmap";
+import HeatmapMaker from "./HeatmapMaker";
 import ResidueDropdown from "./ResidueDropdown";
 
 export default function ProteinSelector({ protein }) {
@@ -130,7 +130,7 @@ export default function ProteinSelector({ protein }) {
           <FormControlLabel value="delete" control={<Radio />} label="Delete" />
         </RadioGroup>
         <Box display="flex" flexDirection="column">
-          <Heatmap
+          <HeatmapMaker
             protein={protein}
             stage={"index"}
             mode={mode}
