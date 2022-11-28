@@ -1,6 +1,5 @@
 import React from "react";
 import { Box } from "@mui/system";
-import PlaceholderHeatmap from "../PlaceholderHeatmap";
 import { Heatmap, HeatmapSeries, HeatmapCell, SequentialLegend, schemes } from 'reaviz';
 
 const aminoAcidList = [

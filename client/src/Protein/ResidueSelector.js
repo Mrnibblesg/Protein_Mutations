@@ -1,7 +1,6 @@
 import { AppBar, Box, Button, Dialog, IconButton, Slide, Toolbar, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import React from "react";
-import PlaceholderHeatmap from "../PlaceholderHeatmap";
 import HeatmapMaker from "./HeatmapMaker";
 import ResidueDropdown from "./ResidueDropdown";
 import CloseIcon from "@mui/icons-material/Close";
