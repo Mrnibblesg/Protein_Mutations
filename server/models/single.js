@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const PairwiseSchema = new mongoose.Schema({
+const SingleSchema = new mongoose.Schema({
   pdb_data: {
     pdb: String,
     pdb_id: String,
@@ -38,5 +38,5 @@ const PairwiseSchema = new mongoose.Schema({
   path: String,
 });
 
-const pairwise = mongoose.model("Pairwise", PairwiseSchema, "Pairwise");
-export default pairwise;
+const single = mongoose.model("Single", SingleSchema, "Single");
+export default single;

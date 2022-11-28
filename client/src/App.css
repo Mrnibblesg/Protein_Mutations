@@ -30,6 +30,7 @@
 
 .msp-viewport {
   height: 470px;
+  /* width: 100%; */
   border: 1px solid black;
   border-radius: 5px;
   padding: 2px;
@@ -37,6 +38,7 @@
 
 .msp-viewport-host3d {
   height: 470px;
+  /* width: 100%; */
 }
 
 canvas {

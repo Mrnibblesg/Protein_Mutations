@@ -10,7 +10,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ResidueSelector({ open, protein, handleClose, residue, handleChange }) {
+export default function ResidueSelector({
+  open,
+  protein,
+  handleClose,
+  residue,
+  handleChange,
+  handleConfirm,
+}) {
   return (
     <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
       <AppBar position="relative">
@@ -37,7 +44,7 @@ export default function ResidueSelector({ open, protein, handleClose, residue, h
             placeholder="Second Index"
           />
         </Box>
-        <Button variant="contained" sx={{ mt: 2 }}>
+        <Button onClick={handleConfirm} variant="contained" sx={{ mt: 2 }}>
           Generate
         </Button>
       </Container>

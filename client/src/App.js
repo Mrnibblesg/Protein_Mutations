@@ -53,7 +53,6 @@ function App() {
                       <Route
                         key={protein._id}
                         path={`${protein.pdb_id}/${protein.type}`}
-                        // element={<ProteinPage {...protein} />}
                         element={<ProteinSelector protein={protein} />}
                       />
                     );

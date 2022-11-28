@@ -14,6 +14,9 @@ import createMolstarViewer from "../molstar";
 import Heatmap from "./Heatmap";
 import ResidueDropdown from "./ResidueDropdown";
 import { useNotification } from "../NotificationContext";
+import axios from "axios";
+import MolstarViewer from "../MolstarViewer";
+import Mutant from "./Mutant";
 
 export default function ProteinSelector({ protein }) {
   const { setNotification } = useNotification();
@@ -22,13 +25,8 @@ export default function ProteinSelector({ protein }) {
   const [residue, setResidue] = useState(protein.type === "single" ? "" : ["", ""]);
   const [mode, setMode] = useState("insert");
   const [residueOpen, setResidueOpen] = useState(false);
-
-  useEffect(() => {
-    const createViewer = async () => {
-      await createMolstarViewer(molstarRef.current, protein.wild_type.pdb_data.pdb);
-    };
-    createViewer();
-  }, [protein]);
+  const [mutantOpen, setMutantOpen] = useState(false);
+  const [mutant, setMutant] = useState();
 
   // Only pass position if pairwise
   const handleIndexChange = (value, position) => {
@@ -107,8 +105,43 @@ export default function ProteinSelector({ protein }) {
     setResidue(["", ""]);
     setResidueOpen(false);
   };
+  const handleMutantClose = () => {
+    setResidue(["", ""]);
+    setMutantOpen(false);
+  };
 
   const handleModeChange = (e) => setMode(e.target.value);
+
+  // Only for pairwise insert
+  const handleResidueConfirm = async () => {
+    if (residue[0] && residue[1]) {
+      setResidueOpen(false);
+      await getMutant();
+      setMutantOpen(true);
+    } else {
+      setNotification("Please select two residues");
+    }
+  };
+
+  const getMutant = async () => {
+    try {
+      const orderedIndex = index instanceof Array ? index.sort() : index;
+      const orderedResidue = residue instanceof Array ? residue.sort() : residue;
+      const response = await axios.post("http://localhost:8080/api/get-mutant", {
+        pdb_id: protein.pdb_id,
+        mode: mode === "insert" ? "ins" : "del",
+        type: protein.type,
+        // Order index and residue
+        index: orderedIndex,
+        residue: orderedResidue,
+      });
+      console.log(response.data);
+      setMutant(response.data);
+    } catch (error) {
+      console.error(error);
+      setNotification("There was an issue retrieving mutant");
+    }
+  };
 
   const title =
     mode === "insert"
@@ -120,12 +153,12 @@ export default function ProteinSelector({ protein }) {
       : "Select deletion indexes";
 
   return (
-    <Container>
+    <Container sx={{ my: 6 }}>
       <Box
-        my={6}
+        mb={5}
         display="flex"
-        flexWrap="wrap"
-        sx={{ justifyContent: { xs: "center", md: "space-between" } }}>
+        flexDirection="column"
+        sx={{ justifyContent: "center", alignItems: "center" }}>
         <Typography variant="h4">{title}</Typography>
         <RadioGroup
           value={mode}
@@ -181,13 +214,6 @@ export default function ProteinSelector({ protein }) {
           </Button>
         </Box>
         {/* Make more responsive instead of 50% */}
-        <div
-          ref={molstarRef}
-          style={{
-            width: "50%",
-            height: "100%",
-          }}
-        />
       </Box>
       <ResidueSelector
         open={residueOpen}
@@ -195,7 +221,20 @@ export default function ProteinSelector({ protein }) {
         residue={residue}
         handleChange={handleResTextChange}
         handleClose={handleResidueClose}
+        handleConfirm={handleResidueConfirm}
       />
+      {mutant && (
+        <Mutant
+          open={mutantOpen}
+          mutant={mutant}
+          index={index}
+          residue={residue}
+          pdb_id={protein.pdb_id}
+          handleClose={handleMutantClose}
+          mode={mode}
+        />
+      )}
+      <MolstarViewer pdbStr={protein.wild_type.pdb_data.pdb} />
     </Container>
   );
 }
