@@ -17,6 +17,7 @@ export default function ResidueSelector({
   residue,
   handleChange,
   handleConfirm,
+  handleResidueChange,
 }) {
   return (
     <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -31,7 +32,12 @@ export default function ResidueSelector({
         </Toolbar>
       </AppBar>
       <Container sx={{ my: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <HeatmapMaker protein={protein} mode={mode} stage="residue" />
+        <HeatmapMaker
+          protein={protein}
+          mode={mode}
+          stage="residue"
+          handleResidueChange={handleResidueChange}
+        />
         <Box display="flex" mt={2}>
           <ResidueDropdown
             value={residue[0]}

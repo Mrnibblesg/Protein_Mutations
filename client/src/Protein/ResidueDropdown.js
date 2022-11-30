@@ -3,26 +3,26 @@ import { Box } from "@mui/system";
 import React, { useState } from "react";
 
 const residueList = [
-  "A - Ala",
-  "C - Cys",
-  "D - Asp",
-  "E - Glu",
-  "F - Phe",
-  "G - Gly",
-  "H - His",
-  "I - Ile",
-  "K - Lys",
-  "L - Leu",
-  "M - Met",
-  "N - Asn",
-  "P - Pro",
-  "Q - Gln",
-  "R - Arg",
-  "S - Ser",
-  "T - Thr",
-  "V - Val",
-  "W - Trp",
-  "Y - Tyr",
+  ["A", "Ala"],
+  ["C", "Cys"],
+  ["D", "Asp"],
+  ["E", "Glu"],
+  ["F", "Phe"],
+  ["G", "Gly"],
+  ["H", "His"],
+  ["I", "Ile"],
+  ["K", "Lys"],
+  ["L", "Leu"],
+  ["M", "Met"],
+  ["N", "Asn"],
+  ["P", "Pro"],
+  ["Q", "Gln"],
+  ["R", "Arg"],
+  ["S", "Ser"],
+  ["T", "Thr"],
+  ["V", "Val"],
+  ["W", "Trp"],
+  ["Y", "Tyr"],
 ];
 
 export default function ResidueDropdown({ value, handleChange, placeholder }) {
@@ -34,9 +34,9 @@ export default function ResidueDropdown({ value, handleChange, placeholder }) {
       sx={{ ml: 2, width: 120 }}
       label="Residue"
       placeholder={placeholder}>
-      {residueList.map((residue) => (
-        <MenuItem key={residue} value={residue}>
-          {residue}
+      {residueList.map(([short, long]) => (
+        <MenuItem key={short} value={short}>
+          {short} - {long}
         </MenuItem>
       ))}
     </TextField>

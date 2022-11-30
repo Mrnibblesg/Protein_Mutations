@@ -1,6 +1,17 @@
 import React from "react";
 import { Box } from "@mui/system";
-import { Heatmap, HeatmapSeries, HeatmapCell, SequentialLegend, schemes } from "reaviz";
+import {
+  Heatmap,
+  HeatmapSeries,
+  HeatmapCell,
+  SequentialLegend,
+  schemes,
+  LinearAxis,
+  LinearXAxisTickLabel,
+  LinearXAxis,
+  LinearXAxisTickSeries,
+  LinearAxisTickLine,
+} from "reaviz";
 
 const aminoAcidList = [
   "A",
@@ -68,6 +79,23 @@ export default function HeatmapMaker({
   let squareClicked = (square) => {
     let column = square.value.key;
     let row = square.value.x;
+    // X axis defaults to first text field, Y axis defaults to second
+    if (protein.type === "single") {
+      handleIndexChange(column);
+      mode === "insert" && handleResidueChange(row);
+    } else if (protein.type === "pairwise" && mode === "insert") {
+      // Stage determines which heatmap is being used for pairwise insert
+      if (stage === "index") {
+        handleIndexChange(column, 0);
+        handleIndexChange(row, 1);
+      } else if (stage === "residue") {
+        handleResidueChange(column, 0);
+        handleResidueChange(row, 1);
+      }
+    } else if (protein.type === "pairwise" && mode === "delete") {
+      handleIndexChange(column, 0);
+      handleIndexChange(row, 1);
+    }
     console.log("col: " + column, "row: " + row);
   };
 
@@ -129,6 +157,7 @@ export default function HeatmapMaker({
       yAxisCount = heatMapSize;
     }
   }
+
   //Here is some sample data so you can get an idea of the format.
   /*const data = [
   {
@@ -156,11 +185,23 @@ export default function HeatmapMaker({
         height={25 * yAxisCount}
         width={25 * xAxisCount}
         data={data}
+        xAxis={
+          <LinearXAxis
+            type="category"
+            axisLine={null}
+            tickSeries={
+              <LinearXAxisTickSeries
+                line={<LinearAxisTickLine strokeWidth={0} size={14} />}
+                label={<LinearXAxisTickLabel padding={5} />}
+              />
+            }
+          />
+        }
         series={
           <HeatmapSeries
             colorScheme={schemes.Reds}
             emptyColor={"#00"}
-            padding={0.001}
+            padding={0.01}
             cell={
               <HeatmapCell
                 style={{ stroke: "#9f9f9f" }}

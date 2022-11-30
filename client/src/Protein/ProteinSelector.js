@@ -174,7 +174,7 @@ export default function ProteinSelector({ protein }) {
         <Box display="flex" flexDirection="column">
           <HeatmapMaker
             protein={protein}
-            stage={"index"}
+            stage="index"
             mode={mode}
             handleIndexChange={handleIndexChange}
             handleResidueChange={handleResidueChange}
@@ -224,6 +224,7 @@ export default function ProteinSelector({ protein }) {
         residue={residue}
         mode={mode}
         handleChange={handleResTextChange}
+        handleResidueChange={handleResidueChange}
         handleClose={handleResidueClose}
         handleConfirm={handleResidueConfirm}
       />
