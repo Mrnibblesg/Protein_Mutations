@@ -12,29 +12,7 @@ import {
   LinearXAxisTickSeries,
   LinearAxisTickLine,
 } from "reaviz";
-
-const aminoAcidList = [
-  "A",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "K",
-  "L",
-  "M",
-  "N",
-  "P",
-  "Q",
-  "R",
-  "S",
-  "T",
-  "V",
-  "W",
-  "Y",
-];
+import { shortResidues as residues } from "../common/residues";
 
 // Generate heatmap based on type of protein and mode
 // Assume heatmap data is stored within protein
@@ -44,7 +22,6 @@ export default function HeatmapMaker({
   mode,
   handleIndexChange,
   handleResidueChange,
-  handleConfirm,
 }) {
   // stage prop is either "index" or "residue", indicating which heatmap to display
   // ONLY FOR PAIRWISE INSERT
@@ -109,9 +86,9 @@ export default function HeatmapMaker({
       xAxis = Array(heatMapSize)
         .fill(0)
         .map((el, index) => (el = index));
-      yAxis = aminoAcidList;
+      yAxis = residues;
       xAxisCount = heatMapSize;
-      yAxisCount = aminoAcidList.length;
+      yAxisCount = residues.length;
     } else {
       heatMapSize += 1;
       if (stage === "index") {
@@ -126,10 +103,10 @@ export default function HeatmapMaker({
         yAxisCount = heatMapSize;
       } else if (stage === "residue") {
         // Generate heatmap with residues on both axes
-        xAxis = aminoAcidList;
-        yAxis = aminoAcidList;
-        xAxisCount = aminoAcidList.length;
-        yAxisCount = aminoAcidList.length;
+        xAxis = residues;
+        yAxis = residues;
+        xAxisCount = residues.length;
+        yAxisCount = residues.length;
       } else {
         throw "Should have defined stage for pairwise insert";
       }
@@ -180,7 +157,7 @@ export default function HeatmapMaker({
   let data = constructData(xAxis, yAxis);
 
   let heatmapContainer = (
-    <Box id="mainHeatmapContainer">
+    <Box id="mainHeatmapContainer" display="flex" alignItems="center">
       <Heatmap
         height={25 * yAxisCount}
         width={25 * xAxisCount}
@@ -216,7 +193,7 @@ export default function HeatmapMaker({
       <SequentialLegend
         colorScheme={schemes.Reds}
         data={data}
-        style={{ height: "165px", marginLeft: "10px" }}
+        style={{ height: 25 * (yAxisCount - 1), marginLeft: "10px" }}
       />
     </Box>
   );

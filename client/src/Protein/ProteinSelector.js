@@ -10,7 +10,6 @@ import {
 import { Box } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 import ResidueSelector from "./ResidueSelector";
-import createMolstarViewer from "../molstar";
 import HeatmapMaker from "./HeatmapMaker";
 import ResidueDropdown from "./ResidueDropdown";
 import { useNotification } from "../NotificationContext";
@@ -178,7 +177,6 @@ export default function ProteinSelector({ protein }) {
             mode={mode}
             handleIndexChange={handleIndexChange}
             handleResidueChange={handleResidueChange}
-            handleConfirm={handleConfirm}
           />
           <div style={{ marginTop: 16 }} />
           <div>
@@ -213,7 +211,7 @@ export default function ProteinSelector({ protein }) {
             )}
           </div>
           <Button onClick={handleConfirm} variant="contained" sx={{ mt: 3 }}>
-            Test Confirm
+            {protein.type === "pairwise" && mode === "insert" ? "Confirm Indices" : "Generate"}
           </Button>
         </Box>
         {/* Make more responsive instead of 50% */}

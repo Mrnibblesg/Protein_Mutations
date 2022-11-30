@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import React, { useEffect, useRef } from "react";
 import createMolstarViewer from "./molstar";
 
@@ -12,12 +13,14 @@ export default function MolstarViewer({ pdbStr, mutant }) {
   }, [pdbStr, mutant]);
 
   return (
-    <div
-      ref={molstarRef}
-      style={{
-        width: "100%",
-        height: "100%",
-      }}
-    />
+    <Box mx={{ sm: 5, md: 15, xl: 20 }}>
+      <div
+        ref={molstarRef}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      />
+    </Box>
   );
 }

@@ -29,7 +29,7 @@
 }
 
 .msp-viewport {
-  height: 470px;
+  height: 400px;
   /* width: 100%; */
   border: 1px solid black;
   border-radius: 5px;
@@ -37,7 +37,7 @@
 }
 
 .msp-viewport-host3d {
-  height: 470px;
+  height: 400px;
   /* width: 100%; */
 }
 
