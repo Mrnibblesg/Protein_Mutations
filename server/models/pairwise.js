@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const PairwiseSchema = new mongoose.Schema({
   pdb_id: String,
   mode: String,
-  index: [String],
+  index: [Number],
   residue: [String],
   pdb_data: {
     pdb: String,

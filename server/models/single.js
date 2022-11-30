@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const SingleSchema = new mongoose.Schema({
   mode: String,
-  index: String,
+  index: Number,
   residue: String,
   pdb_id: String,
   pdb_data: {

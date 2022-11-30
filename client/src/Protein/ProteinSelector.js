@@ -31,16 +31,17 @@ export default function ProteinSelector({ protein }) {
   // Only pass position if pairwise
   const handleIndexChange = (value, position) => {
     // Handle single
+    console.log(value, position);
     if (protein.type === "single") {
       setIndex(value);
       // Handle pairwise
     } else {
       // If in position 1
       if (position) {
-        setIndex([index[0], value]);
+        setIndex((prev) => [prev[0], value]);
         // If in position 0
       } else {
-        setIndex([value, index[1]]);
+        setIndex((prev) => [value, prev[1]]);
       }
     }
   };
@@ -56,10 +57,10 @@ export default function ProteinSelector({ protein }) {
     } else {
       // If in position 1
       if (position) {
-        setResidue([residue[0], value]);
+        setResidue((prev) => [prev[0], value]);
         // If in position 0
       } else {
-        setResidue([value, residue[1]]);
+        setResidue((prev) => [value, prev[1]]);
       }
     }
   };
