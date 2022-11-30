@@ -73,7 +73,6 @@ export default function HeatmapMaker({
       handleIndexChange(column, 0);
       handleIndexChange(row, 1);
     }
-    console.log("col: " + column, "row: " + row);
   };
 
   //Update the heatMapSize if we know the indices will be more than

@@ -21,7 +21,6 @@ router.get("/get-basic-proteins", (req, res) => {
 router.post("/get-mutant", async (req, res) => {
   const { pdb_id, mode, type, index, residue } = req.body;
   try {
-    console.log(type);
     if (type === "single") {
       // Query single collection
       const mutant = await Single.findOne({ pdb_id, mode, index, residue }).exec();

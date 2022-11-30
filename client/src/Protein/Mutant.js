@@ -26,7 +26,7 @@ export default function Mutant({ open, mutant, handleClose, mode, type }) {
     filename += ".json";
     FileDownload(JSON.stringify(mutant), filename);
   };
-  console.log(mutant.residue);
+
   const title =
     type === "single"
       ? mode === "insert"

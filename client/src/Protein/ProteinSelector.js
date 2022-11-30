@@ -137,7 +137,6 @@ export default function ProteinSelector({ protein }) {
         index: orderedIndex,
         residue,
       });
-      console.log(response.data);
       setMutant(response.data);
     } catch (error) {
       console.error(error);
