@@ -13,6 +13,7 @@ export default function ResidueSelector({
   open,
   protein,
   handleClose,
+  mode,
   residue,
   handleChange,
   handleConfirm,
@@ -30,7 +31,7 @@ export default function ResidueSelector({
         </Toolbar>
       </AppBar>
       <Container sx={{ my: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <HeatmapMaker protein={protein} />
+        <HeatmapMaker protein={protein} mode={mode} stage="residue" />
         <Box display="flex" mt={2}>
           <ResidueDropdown
             value={residue[0]}

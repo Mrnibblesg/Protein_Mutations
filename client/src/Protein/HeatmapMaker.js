@@ -1,6 +1,6 @@
 import React from "react";
 import { Box } from "@mui/system";
-import { Heatmap, HeatmapSeries, HeatmapCell, SequentialLegend, schemes } from 'reaviz';
+import { Heatmap, HeatmapSeries, HeatmapCell, SequentialLegend, schemes } from "reaviz";
 
 const aminoAcidList = [
   "A",
@@ -54,11 +54,10 @@ export default function HeatmapMaker({
   //Constructs data from what the proper labels for each axis is, and the heat data inside of protein.
   let constructData = (xAxisLabels, yAxisLabels) => {
     let data = [];
-    for (let i = 0; i < xAxisLabels.length; i++){
-
-      let column = {key: xAxisLabels[i], data: []};
-      for (let j = 0; j < yAxisLabels.length; j++){
-        let square = {key: yAxisLabels[j], data: Math.random() * 50};
+    for (let i = 0; i < xAxisLabels.length; i++) {
+      let column = { key: xAxisLabels[i], data: [] };
+      for (let j = 0; j < yAxisLabels.length; j++) {
+        let square = { key: yAxisLabels[j], data: Math.random() * 50 };
         column.data.push(square);
       }
       data.push(column);
@@ -67,11 +66,10 @@ export default function HeatmapMaker({
   };
 
   let squareClicked = (square) => {
-    
     let column = square.value.key;
     let row = square.value.x;
     console.log("col: " + column, "row: " + row);
-  }
+  };
 
   //Update the heatMapSize if we know the indices will be more than
   //the original residue amount. So, on insertions and an additional one
@@ -80,7 +78,9 @@ export default function HeatmapMaker({
     heatMapSize += 1;
     if (protein.type === "single") {
       // Generate heatmap with insert index on x axis, residue on y axis
-      xAxis = Array(heatMapSize).fill(0).map((el, index) => (el = index));
+      xAxis = Array(heatMapSize)
+        .fill(0)
+        .map((el, index) => (el = index));
       yAxis = aminoAcidList;
       xAxisCount = heatMapSize;
       yAxisCount = aminoAcidList.length;
@@ -88,18 +88,20 @@ export default function HeatmapMaker({
       heatMapSize += 1;
       if (stage === "index") {
         // Generate heatmap with insert index on both axes
-        xAxis = Array(heatMapSize).fill(0).map((el, index) => (el = index));
-        yAxis = Array(heatMapSize).fill(0).map((el, index) => (el = index));
+        xAxis = Array(heatMapSize)
+          .fill(0)
+          .map((el, index) => (el = index));
+        yAxis = Array(heatMapSize)
+          .fill(0)
+          .map((el, index) => (el = index));
         xAxisCount = heatMapSize;
         yAxisCount = heatMapSize;
-
       } else if (stage === "residue") {
         // Generate heatmap with residues on both axes
         xAxis = aminoAcidList;
         yAxis = aminoAcidList;
         xAxisCount = aminoAcidList.length;
         yAxisCount = aminoAcidList.length;
-
       } else {
         throw "Should have defined stage for pairwise insert";
       }
@@ -107,19 +109,26 @@ export default function HeatmapMaker({
   } else if (mode === "delete") {
     if (protein.type === "single") {
       // Not sure if a heatmap is possible here, only one possible axis
-      xAxis = Array(heatMapSize).fill(0).map((el, index) => (el = index)).reverse();
+      xAxis = Array(heatMapSize)
+        .fill(0)
+        .map((el, index) => (el = index))
+        .reverse();
       yAxis = ["-"];
       xAxisCount = heatMapSize;
       yAxisCount = 1;
     } else {
       // Generate heatmap with delete indexes on both axes
-      xAxis = Array(heatMapSize).fill(0).map((el, index) => (el = index)).reverse();
-      yAxis = Array(heatMapSize).fill(0).map((el, index) => (el = index));
+      xAxis = Array(heatMapSize)
+        .fill(0)
+        .map((el, index) => (el = index))
+        .reverse();
+      yAxis = Array(heatMapSize)
+        .fill(0)
+        .map((el, index) => (el = index));
       xAxisCount = heatMapSize;
       yAxisCount = heatMapSize;
     }
   }
-
   //Here is some sample data so you can get an idea of the format.
   /*const data = [
   {
@@ -139,7 +148,7 @@ export default function HeatmapMaker({
     ]
   }
 ];*/
-  let data = constructData(xAxis,yAxis);
+  let data = constructData(xAxis, yAxis);
 
   let heatmapContainer = (
     <Box id="mainHeatmapContainer">
@@ -154,8 +163,10 @@ export default function HeatmapMaker({
             padding={0.001}
             cell={
               <HeatmapCell
-                style={{ stroke: "#9f9f9f"}}
-                onClick={(event) => {squareClicked(event)}}
+                style={{ stroke: "#9f9f9f" }}
+                onClick={(event) => {
+                  squareClicked(event);
+                }}
               />
             }
           />
@@ -164,9 +175,8 @@ export default function HeatmapMaker({
       <SequentialLegend
         colorScheme={schemes.Reds}
         data={data}
-        style={{ height: '165px', marginLeft: '10px' }}
+        style={{ height: "165px", marginLeft: "10px" }}
       />
-
     </Box>
   );
 

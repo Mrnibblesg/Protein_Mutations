@@ -21,8 +21,9 @@ import Mutant from "./Mutant";
 export default function ProteinSelector({ protein }) {
   const { setNotification } = useNotification();
   const molstarRef = useRef();
-  const [index, setIndex] = useState(protein.type === "single" ? "" : ["", ""]);
-  const [residue, setResidue] = useState(protein.type === "single" ? "" : ["", ""]);
+  const initialParams = protein.type === "single" ? "" : ["", ""];
+  const [index, setIndex] = useState(initialParams);
+  const [residue, setResidue] = useState(initialParams);
   const [mode, setMode] = useState("insert");
   const [residueOpen, setResidueOpen] = useState(false);
   const [mutantOpen, setMutantOpen] = useState(false);
@@ -74,7 +75,7 @@ export default function ProteinSelector({ protein }) {
   };
   // Confirm navigation to next stage, locks in index/residue
   // For pairwise insert, will render ResidueSelector with new heatmap
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     // Check index for valid input
     // TODO: Alert user of incorrect input
     // Validate pairwise proteins
@@ -97,17 +98,20 @@ export default function ProteinSelector({ protein }) {
     if (protein.type === "pairwise" && mode === "insert") {
       setResidueOpen(true);
     } else {
-      // Display mutant page, correctly order indexes
+      setMutantOpen(true);
+      await getMutant();
     }
   };
   const handleResidueClose = () => {
-    // Always array since there shouldn't be a dialog without pairwise insert
-    setResidue(["", ""]);
+    setResidue(initialParams);
     setResidueOpen(false);
   };
   const handleMutantClose = () => {
-    setResidue(["", ""]);
+    // Reset state
+    setResidue(initialParams);
+    setIndex(initialParams);
     setMutantOpen(false);
+    setMutant();
   };
 
   const handleModeChange = (e) => setMode(e.target.value);
@@ -116,8 +120,8 @@ export default function ProteinSelector({ protein }) {
   const handleResidueConfirm = async () => {
     if (residue[0] && residue[1]) {
       setResidueOpen(false);
-      await getMutant();
       setMutantOpen(true);
+      await getMutant();
     } else {
       setNotification("Please select two residues");
     }
@@ -126,14 +130,13 @@ export default function ProteinSelector({ protein }) {
   const getMutant = async () => {
     try {
       const orderedIndex = index instanceof Array ? index.sort() : index;
-      const orderedResidue = residue instanceof Array ? residue.sort() : residue;
       const response = await axios.post("http://localhost:8080/api/get-mutant", {
         pdb_id: protein.pdb_id,
         mode: mode === "insert" ? "ins" : "del",
         type: protein.type,
         // Order index and residue
         index: orderedIndex,
-        residue: orderedResidue,
+        residue,
       });
       console.log(response.data);
       setMutant(response.data);
@@ -219,6 +222,7 @@ export default function ProteinSelector({ protein }) {
         open={residueOpen}
         protein={protein}
         residue={residue}
+        mode={mode}
         handleChange={handleResTextChange}
         handleClose={handleResidueClose}
         handleConfirm={handleResidueConfirm}
@@ -227,9 +231,7 @@ export default function ProteinSelector({ protein }) {
         <Mutant
           open={mutantOpen}
           mutant={mutant}
-          index={index}
-          residue={residue}
-          pdb_id={protein.pdb_id}
+          type={protein.type}
           handleClose={handleMutantClose}
           mode={mode}
         />

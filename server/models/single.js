@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
 const SingleSchema = new mongoose.Schema({
+  mode: String,
+  index: String,
+  residue: String,
+  pdb_id: String,
   pdb_data: {
     pdb: String,
-    pdb_id: String,
-    mode: String,
-    index: Number | [Number],
-    residue: String | [String],
     rosetta_scores: [
       {
         label: String,
