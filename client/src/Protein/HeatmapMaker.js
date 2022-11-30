@@ -196,6 +196,7 @@ export default function HeatmapMaker({
             cell={
               <HeatmapCell
                 style={{ stroke: "rgba(0,0,0,0)" }}
+                rx={0}
                 onClick={(event) => {
                   squareClicked(event);
                 }}
