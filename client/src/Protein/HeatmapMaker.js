@@ -125,8 +125,7 @@ export default function HeatmapMaker({
       // Generate heatmap with delete indexes on both axes
       xAxis = Array(heatMapSize)
         .fill(0)
-        .map((el, index) => (el = index + 1))
-        .reverse();
+        .map((el, index) => (el = index + 1));
       yAxis = Array(heatMapSize)
         .fill(0)
         .map((el, index) => (el = index + 1));
