@@ -85,7 +85,7 @@ export default function HeatmapMaker({
       // Generate heatmap with insert index on x axis, residue on y axis
       xAxis = Array(heatMapSize)
         .fill(0)
-        .map((el, index) => (el = index));
+        .map((el, index) => (el = index + 1));
       yAxis = residues;
       xAxisCount = heatMapSize;
       yAxisCount = residues.length;
@@ -95,10 +95,10 @@ export default function HeatmapMaker({
         // Generate heatmap with insert index on both axes
         xAxis = Array(heatMapSize)
           .fill(0)
-          .map((el, index) => (el = index));
+          .map((el, index) => (el = index + 1));
         yAxis = Array(heatMapSize)
           .fill(0)
-          .map((el, index) => (el = index));
+          .map((el, index) => (el = index + 1));
         xAxisCount = heatMapSize;
         yAxisCount = heatMapSize;
       } else if (stage === "residue") {
@@ -116,7 +116,7 @@ export default function HeatmapMaker({
       // Not sure if a heatmap is possible here, only one possible axis
       xAxis = Array(heatMapSize)
         .fill(0)
-        .map((el, index) => (el = index))
+        .map((el, index) => (el = index + 1))
         .reverse();
       yAxis = ["-"];
       xAxisCount = heatMapSize;
@@ -125,11 +125,11 @@ export default function HeatmapMaker({
       // Generate heatmap with delete indexes on both axes
       xAxis = Array(heatMapSize)
         .fill(0)
-        .map((el, index) => (el = index))
+        .map((el, index) => (el = index + 1))
         .reverse();
       yAxis = Array(heatMapSize)
         .fill(0)
-        .map((el, index) => (el = index));
+        .map((el, index) => (el = index + 1));
       xAxisCount = heatMapSize;
       yAxisCount = heatMapSize;
     }
