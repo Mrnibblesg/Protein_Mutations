@@ -98,10 +98,14 @@ export default function HeatmapMaker({
   let constructData = (xAxisLabels, yAxisLabels) => {
     let data = [];
     const graph = heatmap();
-    console.log(graph);
-    for (let i = 0; i < xAxisLabels.length - 1; i++) {
+    console.log(xAxisLabels, yAxisLabels);
+    const xLength =
+      protein.type === "single" && mode === "delete" ? xAxisLabels.length : xAxisLabels.length - 1;
+    const yLength =
+      protein.type === "single" && mode === "delete" ? yAxisLabels.length : yAxisLabels.length - 1;
+    for (let i = 0; i < xLength; i++) {
       let column = { key: xAxisLabels[i], data: [] };
-      for (let j = 0; j < yAxisLabels.length - 1; j++) {
+      for (let j = 0; j < yLength; j++) {
         console.log(j);
         let heat = graph[j][i];
         let square;
@@ -259,7 +263,7 @@ export default function HeatmapMaker({
       <SequentialLegend
         colorScheme={heatmapColorScheme}
         data={data}
-        style={{ height: 25 * (yAxisCount - 1), marginLeft: "10px" }}
+        style={{ height: 25 * (yAxisCount - 1), marginLeft: "10px", minHeight: 100 }}
       />
     </Box>
   );

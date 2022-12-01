@@ -114,7 +114,11 @@ export default function ProteinSelector({ protein }) {
     setMutant();
   };
 
-  const handleModeChange = (e) => setMode(e.target.value);
+  const handleModeChange = (e) => {
+    setMode(e.target.value);
+    setIndex(initialParams);
+    setResidue(initialParams);
+  };
 
   // Only for pairwise insert
   const handleResidueConfirm = async () => {
