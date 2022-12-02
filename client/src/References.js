@@ -26,28 +26,31 @@ export default function References() {
   let link1 = "https://ieeebibm.org/BIBM2021/";
 
   return (
-    <div
-      title="References"
-      style={{
-        paddingLeft: "20%",
-        paddingRight: "20%",
-        marginBottom: 20,
-      }}>
-      <ul
+    <div>
+      <h2 style={{ fontSize: "50px" }}>References</h2>
+      <div
+        title="References"
         style={{
-          fontSize: "30px",
+          paddingLeft: "20%",
+          paddingRight: "20%",
+          marginBottom: 20,
         }}>
-        <li
+        <ul
           style={{
-            margin: "30px 0",
+            fontSize: "30px",
           }}>
-          Muneeba Jilani, Alistair Turcan, Nurit Haspel, and Filip Jagodzinski. Assessing the
-          Effects of Amino Acid Insertion and Deletion Mutations. Computation Structural Biology
-          Workshop (CSBW), at <a href={link1}> IEEE BIBM 2021</a>
-        </li>
-        <li>Additional paper pending</li>
-      </ul>
-      <ContactInfo />
+          <li
+            style={{
+              margin: "30px 0",
+            }}>
+            Muneeba Jilani, Alistair Turcan, Nurit Haspel, and Filip Jagodzinski. Assessing the
+            Effects of Amino Acid Insertion and Deletion Mutations. Computation Structural Biology
+            Workshop (CSBW), at <a href={link1}> IEEE BIBM 2021</a>
+          </li>
+          <li>Additional paper pending</li>
+        </ul>
+        <ContactInfo />
+      </div>
     </div>
   );
 }

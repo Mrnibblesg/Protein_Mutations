@@ -38,14 +38,7 @@ function App() {
             <Routes>
               <Route path="" element={<NavBar />}>
                 <Route index element={<Dashboard proteins={proteins} />} />
-                <Route
-                  path="info"
-                  element={
-                    <div>
-                      <Info /> <References />{" "}
-                    </div>
-                  }
-                />
+                <Route path="info" element={<References />} />
                 {
                   //Generate routes from proteins
                   proteins.map((protein) => {

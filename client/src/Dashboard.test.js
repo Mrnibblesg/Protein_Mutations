@@ -18,8 +18,9 @@ test("Search TextField renders", () => {
 test("Search bar can be edited", async () => {
   render(<Dashboard />);
   const searchField = screen.getByTestId("search-field");
-  userEvent.type(searchField, "gln_3");
-  expect(screen.getByTestId("search-field")).toHaveValue("gln_3");
+  userEvent.type(searchField, "1l2y");
+  expect(screen.getByTestId("search-field")).toHaveValue("1l2y");
+  // expect(screen.getByText("1l2y"));
   // // The searched for element is on the screen
   // expect(screen.getAllByText(/gln_3/i)[0]).toBeInTheDocument();
   // // A non-matching protein is not on the screen
