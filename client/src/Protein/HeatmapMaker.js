@@ -104,23 +104,23 @@ export default function HeatmapMaker({
     if (!graph) {
       return null;
     }
-    console.log(xAxisLabels, yAxisLabels);
+
+    //We must keep this until the extra column of 0s is removed from the data on the DB.
     const xLength =
       protein.type === "single" && mode === "delete" ? xAxisLabels.length : xAxisLabels.length - 1;
     const yLength =
       protein.type === "single" && mode === "delete" ? yAxisLabels.length : yAxisLabels.length - 1;
+
     for (let i = 0; i < xLength; i++) {
       let column = { key: xAxisLabels[i], data: [] };
       for (let j = 0; j < yLength; j++) {
-        console.log(j);
         let heat = graph[j][i];
-        let square;
-        if (isNaN(heat)) {
+        let square = { key: yAxisLabels[j], data: heat };
+
+        //Heat is null (shows as a black square) if there is no heatmap data for the square, or
+        //if the indices are the same on an index x index heatmap.
+        if (isNaN(heat) || (stage === "index" && i === j)) {
           square = { key: yAxisLabels[j], data: null };
-        } else if (stage === "index" && i === j) {
-          square = { key: yAxisLabels[j], data: null };
-        } else {
-          square = { key: yAxisLabels[j], data: heat };
         }
         column.data.push(square);
       }
@@ -129,13 +129,18 @@ export default function HeatmapMaker({
     return data;
   };
 
+
+  //When the square is clicked, call handler functions which
+  //will populate the input fields accordingly.
   let squareClicked = (square) => {
     let column = square.value.key;
     let row = square.value.x;
     // X axis defaults to first text field, Y axis defaults to second
     if (protein.type === "single") {
       handleIndexChange(column);
-      mode === "insert" && handleResidueChange(row);
+      if (mode === "insert"){
+          handleResidueChange(row);
+      }
     } else if (protein.type === "pairwise" && mode === "insert") {
       // Stage determines which heatmap is being used for pairwise insert
       if (stage === "index") {
@@ -188,11 +193,10 @@ export default function HeatmapMaker({
     }
   } else if (mode === "delete") {
     if (protein.type === "single") {
-      // Not sure if a heatmap is possible here, only one possible axis
+      // Only one axis for this heatmap. The heatmap will display as a line of squares.
       xAxis = Array(heatMapSize)
         .fill(0)
         .map((el, index) => (el = index + 1))
-        .reverse();
       yAxis = ["-"];
       xAxisCount = heatMapSize;
       yAxisCount = 1;
