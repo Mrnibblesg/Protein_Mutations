@@ -4,8 +4,8 @@ import NavBar from "./NavBar";
 import Dashboard from "./Dashboard";
 import theme from "./theme";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Info from "./Info";
-import References from "./References";
+import Info from "./InfoPage/Info";
+import References from "./InfoPage/References";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ProteinSelector from "./Protein/ProteinSelector";
@@ -21,6 +21,7 @@ function App() {
       try {
         const response = await axios.get("http://localhost:8080/api/get-basic-proteins");
         setProteins(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error(error);
         setNotification("There was an issue retrieving proteins");

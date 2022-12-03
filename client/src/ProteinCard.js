@@ -6,7 +6,7 @@ import { Link as RouterLink } from "react-router-dom";
 // When clicked, it should navigate to the heatmap visualizer
 function ProteinCard({ protein }) {
   return (
-    <Card data-testid="protein-card">
+    <Card>
       <CardActionArea component={RouterLink} to={`${protein.pdb_id}/${protein.type}`}>
         <CardContent>
           <Typography variant="h5" component="div">

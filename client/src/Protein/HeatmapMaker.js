@@ -6,8 +6,6 @@ import {
   HeatmapCell,
   ChartTooltip,
   SequentialLegend,
-  schemes,
-  LinearAxis,
   LinearXAxisTickLabel,
   LinearXAxis,
   LinearXAxisTickSeries,
@@ -21,6 +19,7 @@ import {
   pairwiseInsertIdx,
   pairwiseDelete,
 } from "../common/heatmaps";
+import { Typography } from "@mui/material";
 
 // Generate heatmap based on type of protein and mode
 // Assume heatmap data is stored within protein
@@ -75,22 +74,26 @@ export default function HeatmapMaker({
   let yAxisCount;
 
   const heatmap = () => {
-    if (protein.type === "single") {
-      if (mode === "insert") {
-        return singleInsert;
-      } else {
-        return singleDelete;
-      }
-    } else {
-      if (mode === "insert") {
-        if (stage === "index") {
-          return pairwiseInsertIdx;
+    if (protein.pdb_id === "1l2y") {
+      if (protein.type === "single") {
+        if (mode === "insert") {
+          return singleInsert;
         } else {
-          return pairwiseInsertRes;
+          return singleDelete;
         }
       } else {
-        return pairwiseDelete;
+        if (mode === "insert") {
+          if (stage === "index") {
+            return pairwiseInsertIdx;
+          } else {
+            return pairwiseInsertRes;
+          }
+        } else {
+          return pairwiseDelete;
+        }
       }
+    } else {
+      return null;
     }
   };
 
@@ -98,6 +101,9 @@ export default function HeatmapMaker({
   let constructData = (xAxisLabels, yAxisLabels) => {
     let data = [];
     const graph = heatmap();
+    if (!graph) {
+      return null;
+    }
     console.log(xAxisLabels, yAxisLabels);
     const xLength =
       protein.type === "single" && mode === "delete" ? xAxisLabels.length : xAxisLabels.length - 1;
@@ -226,45 +232,53 @@ export default function HeatmapMaker({
 
   let heatmapContainer = (
     <Box id="mainHeatmapContainer" display="flex" alignItems="center">
-      <Heatmap
-        height={25 * yAxisCount}
-        width={25 * xAxisCount}
-        data={data}
-        xAxis={
-          <LinearXAxis
-            type="category"
-            axisLine={null}
-            tickSeries={
-              <LinearXAxisTickSeries
-                line={<LinearAxisTickLine strokeWidth={0} size={14} />}
-                label={<LinearXAxisTickLabel padding={5} />}
+      {data ? (
+        <>
+          <Heatmap
+            height={25 * yAxisCount}
+            width={25 * xAxisCount}
+            data={data}
+            xAxis={
+              <LinearXAxis
+                type="category"
+                axisLine={null}
+                tickSeries={
+                  <LinearXAxisTickSeries
+                    line={<LinearAxisTickLine strokeWidth={0} size={14} />}
+                    label={<LinearXAxisTickLabel padding={5} />}
+                  />
+                }
+              />
+            }
+            series={
+              <HeatmapSeries
+                colorScheme={heatmapColorScheme}
+                emptyColor={"#000000"}
+                padding={0.0001} //A value of 0 defaults to 0.1. So set it close to 0
+                cell={
+                  <HeatmapCell
+                    style={{ stroke: "rgba(0,0,0,0)" }}
+                    rx={0}
+                    onClick={(event) => {
+                      squareClicked(event);
+                    }}
+                    tooltip={<ChartTooltip color={"rgb(255,0,0,0.5)"} />}
+                  />
+                }
               />
             }
           />
-        }
-        series={
-          <HeatmapSeries
+          <SequentialLegend
             colorScheme={heatmapColorScheme}
-            emptyColor={"#000000"}
-            padding={0.0001} //A value of 0 defaults to 0.1. So set it close to 0
-            cell={
-              <HeatmapCell
-                style={{ stroke: "rgba(0,0,0,0)" }}
-                rx={0}
-                onClick={(event) => {
-                  squareClicked(event);
-                }}
-                tooltip={<ChartTooltip color={"rgb(255,0,0,0.5)"} />}
-              />
-            }
+            data={data}
+            style={{ height: 25 * (yAxisCount - 1), marginLeft: "10px", minHeight: 100 }}
           />
-        }
-      />
-      <SequentialLegend
-        colorScheme={heatmapColorScheme}
-        data={data}
-        style={{ height: 25 * (yAxisCount - 1), marginLeft: "10px", minHeight: 100 }}
-      />
+        </>
+      ) : (
+        <Typography variant="h4" gutterBottom>
+          There was an error loading the heatmap, try a different protein (1l2y, probably)
+        </Typography>
+      )}
     </Box>
   );
 

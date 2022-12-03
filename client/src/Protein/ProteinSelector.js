@@ -16,8 +16,9 @@ import { useNotification } from "../NotificationContext";
 import axios from "axios";
 import MolstarViewer from "../MolstarViewer";
 import Mutant from "./Mutant";
+import ModeRadio from "./ModeRadio";
 
-export default function ProteinSelector({ protein }) {
+function ProteinSelector({ protein }) {
   const { setNotification } = useNotification();
   const molstarRef = useRef();
   const initialParams = protein.type === "single" ? "" : ["", ""];
@@ -102,10 +103,13 @@ export default function ProteinSelector({ protein }) {
       await getMutant();
     }
   };
+
+  // Closes dialog for ResidueSelector
   const handleResidueClose = () => {
     setResidue(initialParams);
     setResidueOpen(false);
   };
+  // Closes dialog for Mutant
   const handleMutantClose = () => {
     // Reset state
     setResidue(initialParams);
@@ -114,6 +118,7 @@ export default function ProteinSelector({ protein }) {
     setMutant();
   };
 
+  // Changes mode state of ModeRadio
   const handleModeChange = (e) => {
     setMode(e.target.value);
     setIndex(initialParams);
@@ -166,14 +171,7 @@ export default function ProteinSelector({ protein }) {
         flexDirection="column"
         sx={{ justifyContent: "center", alignItems: "center" }}>
         <Typography variant="h4">{title}</Typography>
-        <RadioGroup
-          value={mode}
-          onChange={handleModeChange}
-          row
-          sx={{ justifyContent: "center", width: "100%", my: 4 }}>
-          <FormControlLabel value="insert" control={<Radio />} label="Insert" sx={{ pr: 8 }} />
-          <FormControlLabel value="delete" control={<Radio />} label="Delete" />
-        </RadioGroup>
+        <ModeRadio mode={mode} handleModeChange={handleModeChange} />
         <Box display="flex" flexDirection="column">
           <HeatmapMaker
             protein={protein}
@@ -189,6 +187,7 @@ export default function ProteinSelector({ protein }) {
                 value={index}
                 onChange={handleIdxTextChange(null)}
                 variant="outlined"
+                name="indexField"
                 placeholder="Index"
                 sx={{ width: 130 }}
               />
@@ -198,6 +197,7 @@ export default function ProteinSelector({ protein }) {
                   value={index[0]}
                   onChange={handleIdxTextChange(0)}
                   variant="outlined"
+                  name="indexField"
                   placeholder="First Index"
                   sx={{ mr: 2, width: 130 }}
                 />
@@ -205,6 +205,7 @@ export default function ProteinSelector({ protein }) {
                   value={index[1]}
                   onChange={handleIdxTextChange(1)}
                   variant="outlined"
+                  name="indexField"
                   placeholder="Second Index"
                   sx={{ width: 130 }}
                 />
@@ -243,3 +244,5 @@ export default function ProteinSelector({ protein }) {
     </Container>
   );
 }
+
+export default ProteinSelector;

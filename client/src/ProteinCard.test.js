@@ -1,15 +1,8 @@
 import { render, screen } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
 import ProteinCard from "./ProteinCard";
 
-test("renders", () => {
-  render(<ProteinCard name="p1yb" />);
-  const card = screen.getByTestId("protein-card");
-  expect(card).toBeInTheDocument();
-});
-
-test("renders title", () => {
-  render(<ProteinCard name="p1yb" />);
-  const card = screen.getByTestId("protein-card");
-  // Check for title
-  expect(card).toHaveTextContent("p1yb");
+test("card renders", () => {
+  render(<ProteinCard protein={{ pdb_id: "1l2y", type: "single" }} />, { wrapper: BrowserRouter });
+  expect(screen.getByText("1l2y")).toBeInTheDocument();
 });

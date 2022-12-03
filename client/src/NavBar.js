@@ -7,7 +7,7 @@ const NavButton = styled(({ link, ...other }) => <Button component={Link} to={li
   ({ theme }) => ({
     color: "white",
     textTransform: "none",
-    ...theme.typography.h4,
+    fontSize: "2.125rem",
     padding: theme.spacing(0, 5),
   })
 );

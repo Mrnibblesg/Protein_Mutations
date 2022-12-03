@@ -11,6 +11,7 @@ export default function ResidueDropdown({ value, handleChange, placeholder }) {
       onChange={handleChange}
       sx={{ ml: 2, width: 120 }}
       label="Residue"
+      name="residueField"
       placeholder={placeholder}>
       {residues.map(({ short, long }) => (
         <MenuItem key={short} value={short}>

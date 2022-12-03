@@ -1,3 +1,3 @@
 // export default {
-//   testMatch: ["**/*.steps.js"],
+//   transformIgnorePatterns: ["node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"],
 // };
