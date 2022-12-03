@@ -215,7 +215,11 @@ function ProteinSelector({ protein }) {
               <ResidueDropdown value={residue} handleChange={handleResTextChange(null)} />
             )}
           </div>
-          <Button onClick={handleConfirm} variant="contained" sx={{ mt: 3 }}>
+          <Button
+            onClick={handleConfirm}
+            variant="contained"
+            sx={{ mt: 3 }}
+            data-testid="generateButton">
             {protein.type === "pairwise" && mode === "insert" ? "Confirm Indices" : "Generate"}
           </Button>
         </Box>

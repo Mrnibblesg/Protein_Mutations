@@ -21,7 +21,6 @@ function App() {
       try {
         const response = await axios.get("http://localhost:8080/api/get-basic-proteins");
         setProteins(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error(error);
         setNotification("There was an issue retrieving proteins");

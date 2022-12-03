@@ -104,7 +104,6 @@ export default function HeatmapMaker({
     if (!graph) {
       return null;
     }
-    console.log(xAxisLabels, yAxisLabels);
     const xLength =
       protein.type === "single" && mode === "delete" ? xAxisLabels.length : xAxisLabels.length - 1;
     const yLength =
@@ -112,7 +111,6 @@ export default function HeatmapMaker({
     for (let i = 0; i < xLength; i++) {
       let column = { key: xAxisLabels[i], data: [] };
       for (let j = 0; j < yLength; j++) {
-        console.log(j);
         let heat = graph[j][i];
         let square;
         if (isNaN(heat)) {
@@ -135,7 +133,7 @@ export default function HeatmapMaker({
     // X axis defaults to first text field, Y axis defaults to second
     if (protein.type === "single") {
       handleIndexChange(column);
-      mode === "insert" && handleResidueChange(row);
+      if (mode === "insert") handleResidueChange(row);
     } else if (protein.type === "pairwise" && mode === "insert") {
       // Stage determines which heatmap is being used for pairwise insert
       if (stage === "index") {

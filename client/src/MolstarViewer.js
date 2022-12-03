@@ -13,7 +13,7 @@ export default function MolstarViewer({ pdbStr, mutant }) {
   }, [pdbStr, mutant]);
 
   return (
-    <Box mx={{ sm: 5, md: 15, xl: 20 }}>
+    <Box mx={{ sm: 5, md: 15, xl: 20 }} data-testid="molstarViewer">
       <div
         ref={molstarRef}
         style={{

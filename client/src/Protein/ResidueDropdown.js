@@ -12,6 +12,7 @@ export default function ResidueDropdown({ value, handleChange, placeholder }) {
       sx={{ ml: 2, width: 120 }}
       label="Residue"
       name="residueField"
+      inputProps={{ "data-testid": "residueDropdown" }}
       placeholder={placeholder}>
       {residues.map(({ short, long }) => (
         <MenuItem key={short} value={short}>

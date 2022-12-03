@@ -2,12 +2,9 @@ Feature: Heatmap
 
   This feature is to display a heatmap to the user with their requested information.
 
-  Scenario: Heatmap displays when a protein is selected
+  Scenario: Heatmap displays for single protein
     Given I am on the home page
-    When protein 1csp is selected
+    When single protein 1l2y is selected
+    When insert position and residue are selected
+    When generate button is pressed
     Then the heatmap for that protein is displayed
-
-  Scenario: Heatmap doesn't display if there is no data for it in the database
-    Given I am on the home page and protein 3kis does not have data
-    When protein 3kis is selected
-    Then no heatmap will be displayed on the new page

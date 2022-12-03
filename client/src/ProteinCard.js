@@ -7,7 +7,10 @@ import { Link as RouterLink } from "react-router-dom";
 function ProteinCard({ protein }) {
   return (
     <Card>
-      <CardActionArea component={RouterLink} to={`${protein.pdb_id}/${protein.type}`}>
+      <CardActionArea
+        component={RouterLink}
+        to={`${protein.pdb_id}/${protein.type}`}
+        data-testid={`${protein.pdb_id}/${protein.type}`}>
         <CardContent>
           <Typography variant="h5" component="div">
             {protein.pdb_id}
