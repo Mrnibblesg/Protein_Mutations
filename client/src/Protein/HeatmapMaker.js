@@ -118,9 +118,9 @@ export default function HeatmapMaker({
         let square = { key: yAxisLabels[j], data: heat };
 
         //Heat is null (shows as a black square) if there is no heatmap data for the square, or
-        //if the indices are the same on an index x index heatmap.
-        if (isNaN(heat) || (stage === "index" && i === j)) {
-          square = { key: yAxisLabels[j], data: null };
+        //if the indices are the same on a pairwise indel index x index heatmap.
+        if (isNaN(heat) || (protein.type === "pairwise" && stage === "index" && i === j)) {
+          square.data = null;
         }
         column.data.push(square);
       }
