@@ -12,7 +12,9 @@ export function Notification() {
   const { notification, setNotification } = useNotification();
   const [open, setOpen] = useState(false);
   const [timer, setTimer] = useState();
-  const handleClose = () => setNotification(null);
+  const handleClose = () => {
+    setNotification(null);
+  };
 
   // This will display the snackbar and reset the timer whenever the message prop
   // changes to a non-falsy value
@@ -21,9 +23,13 @@ export function Notification() {
     clearTimeout(timer);
     const timeout = setTimeout(() => {
       setOpen(false);
+      setNotification(null);
     }, 4000);
     setTimer(timeout);
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+      setTimer();
+    };
   }, [notification]);
 
   return (

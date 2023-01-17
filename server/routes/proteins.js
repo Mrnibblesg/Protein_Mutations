@@ -21,16 +21,21 @@ router.get("/get-basic-proteins", (req, res) => {
 router.post("/get-mutant", async (req, res) => {
   const { pdb_id, mode, type, index, residue } = req.body;
   try {
+    let mutant;
     if (type === "single") {
       // Query single collection
-      const mutant = await Single.findOne({ pdb_id, mode, index, residue }).exec();
-      res.status(200).json(mutant);
+      mutant = await Single.findOne({ pdb_id, mode, index, residue }).exec();
     } else if (type === "pairwise") {
       // Query pairwise collection
-      const mutant = await Pairwise.findOne({ pdb_id, mode, index, residue }).exec();
-      res.status(200).json(mutant);
+      mutant = await Pairwise.findOne({ pdb_id, mode, index, residue }).exec();
     } else {
       return res.status(400).send("Invalid request params");
+    }
+    // Send error if mutant does not exist
+    if (mutant) {
+      res.status(200).json(mutant);
+    } else {
+      res.status(404).send("Cannot find mutant");
     }
   } catch (error) {
     console.error(error);

@@ -32,7 +32,6 @@ function ProteinSelector({ protein }) {
   // Only pass position if pairwise
   const handleIndexChange = (value, position) => {
     // Handle single
-    console.log(value, position);
     if (protein.type === "single") {
       setIndex(value);
       // Handle pairwise
