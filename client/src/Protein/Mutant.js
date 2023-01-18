@@ -12,6 +12,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Mutant({ open, mutant, handleClose, mode, type }) {
+  console.log(mutant);
   const download = () => {
     let filename = mutant.pdb_id + mutant.mode;
     if (type === "single") {
@@ -62,7 +63,9 @@ export default function Mutant({ open, mutant, handleClose, mode, type }) {
         </Box>
         {mutant && <MolstarViewer pdbStr={mutant.pdb_data?.pdb} mutant={mutant} />}
         {/* Maybe having loading thing when mutant is falsy */}
+        {<p sx={{alignItems: "center"}}>Hbond count: {mutant.hbond_count}</p>}
       </Container>
+      {/*Add extra data here, when we've arrived at the final screen. Like a download preview.*/}
     </Dialog>
   );
 }
