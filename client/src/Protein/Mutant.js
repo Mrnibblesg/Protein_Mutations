@@ -11,8 +11,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function Mutant({ open, mutant, handleClose, mode, type }) {
-  console.log(mutant);
+export default function Mutant({ mutant, handleClose, mode, type }) {
   const download = () => {
     let filename = mutant.pdb_id + mutant.mode;
     if (type === "single") {
@@ -41,7 +40,7 @@ export default function Mutant({ open, mutant, handleClose, mode, type }) {
   return (
     <Dialog
       fullScreen
-      open={open}
+      open
       onClose={handleClose}
       TransitionComponent={Transition}
       TransitionProps={{ unmountOnExit: true }}>
@@ -63,7 +62,7 @@ export default function Mutant({ open, mutant, handleClose, mode, type }) {
         </Box>
         {mutant && <MolstarViewer pdbStr={mutant.pdb_data?.pdb} mutant={mutant} />}
         {/* Maybe having loading thing when mutant is falsy */}
-        {<p sx={{alignItems: "center"}}>Hbond count: {mutant.hbond_count}</p>}
+        {<p sx={{ alignItems: "center" }}>Hbond count: {mutant.hbond_count}</p>}
       </Container>
       {/*Add extra data here, when we've arrived at the final screen. Like a download preview.*/}
     </Dialog>
