@@ -19,7 +19,9 @@ router.get("/get-basic-proteins", (req, res) => {
 
 // Currently only works for pairwise
 router.post("/get-mutant", async (req, res) => {
-  const { pdb_id, mode, type, index, residue } = req.body;
+  let { pdb_id, mode, type, index, residue } = req.body;
+  // Residue must be undefined for delete operation, otherwise not found
+  residue = mode === "del" ? undefined : residue;
   try {
     let mutant;
     if (type === "single") {

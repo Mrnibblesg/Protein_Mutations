@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ResidueSelector from "./ResidueSelector";
 import HeatmapMaker from "./HeatmapMaker";
 import ResidueDropdown from "./ResidueDropdown";
@@ -17,17 +17,86 @@ import axios from "axios";
 import MolstarViewer from "../MolstarViewer";
 import Mutant from "./Mutant";
 import ModeRadio from "./ModeRadio";
+import { Routes, Route, useNavigate, useLocation, redirect } from "react-router";
 
 function ProteinSelector({ protein }) {
   const { setNotification } = useNotification();
-  const molstarRef = useRef();
   const initialParams = protein.type === "single" ? "" : ["", ""];
   const [index, setIndex] = useState(initialParams);
   const [residue, setResidue] = useState(initialParams);
   const [mode, setMode] = useState("insert");
   const [residueOpen, setResidueOpen] = useState(false);
-  const [mutantOpen, setMutantOpen] = useState(false);
   const [mutant, setMutant] = useState();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Extracts appropriate protein information from URL for direct navigation
+  // i.e. localhost:3000/1l2y/single/10/A will fill out state and open mutant dialog
+  // Main purpose is for shareable links
+  useEffect(() => {
+    const residueChain = "([ACDEFGHIKLMNPQRSTVWY])";
+    const baseInfo = new RegExp(
+      `^/((?:\\w|\\d){4})/(single|pairwise)/?(insert|delete)?/?(.*)`,
+      "i"
+    );
+    // Extract information, index & residue information is inside urlMutant
+    let [, urlPdbId, urlType, urlMode, urlMutant] = location.pathname.match(baseInfo);
+    urlMutant = urlMutant.toUpperCase();
+    // Don't want to set index or residue to undefined
+    let urlIndex = initialParams;
+    let urlResidue = initialParams;
+    let mutantRegEx;
+    let mutantInfo;
+    // Extract index and residue information from urlMutant based on type & mode
+    try {
+      if (urlMode === "insert") {
+        if (urlType === "single") {
+          mutantRegEx = new RegExp(`^(\\d{1,3})/${residueChain}/?$`, "i");
+          [, urlIndex, urlResidue] = urlMutant.match(mutantRegEx);
+        } else {
+          mutantRegEx = new RegExp(
+            `^(\\d{1,3})/${residueChain}/(\\d{1,3})/${residueChain}/?$`,
+            "i"
+          );
+          mutantInfo = urlMutant.match(mutantRegEx);
+          urlIndex = [mutantInfo[1], mutantInfo[3]];
+          urlResidue = [mutantInfo[2], mutantInfo[4]];
+        }
+        // Delete
+      } else if (urlMode === "delete") {
+        if (urlType === "single") {
+          mutantRegEx = new RegExp("^(\\d{1,3})/?$");
+          urlIndex = urlMutant.match(mutantRegEx)[1];
+        } else {
+          console.log(mutantInfo);
+          mutantRegEx = new RegExp("^(\\d{1,3})/(\\d{1,3})/?$");
+          mutantInfo = urlMutant.match(mutantRegEx);
+          urlIndex = [mutantInfo[1], mutantInfo[2]];
+        }
+      } else {
+        if (urlPdbId && urlType) {
+          return navigate(`/${urlPdbId}/${urlType}`);
+        } else {
+          return navigate("/");
+        }
+      }
+      setIndex(urlIndex);
+      setResidue(urlResidue);
+      setMode(urlMode);
+      getMutant(urlMode, urlIndex, urlResidue);
+    } catch (error) {
+      console.error(error);
+      setNotification("There was an error loading protein from URL, redirecting...");
+      setTimeout(() => {
+        // Navigate to protein page if possible, otherwise dashboard
+        if (urlPdbId && urlType) {
+          navigate(`/${urlPdbId}/${urlType}`);
+        } else {
+          navigate("/");
+        }
+      }, 2500);
+    }
+  }, []);
 
   // Only pass position if pairwise
   const handleIndexChange = (value, position) => {
@@ -64,6 +133,7 @@ function ProteinSelector({ protein }) {
       }
     }
   };
+  // Residue dropdown change
   const handleResTextChange = (position) => (e) => {
     handleResidueChange(e.target.value, position);
   };
@@ -98,8 +168,8 @@ function ProteinSelector({ protein }) {
     if (protein.type === "pairwise" && mode === "insert") {
       setResidueOpen(true);
     } else {
-      setMutantOpen(true);
-      await getMutant();
+      navigate(mutantUrl);
+      await getMutant(mode, index, residue);
     }
   };
 
@@ -113,8 +183,9 @@ function ProteinSelector({ protein }) {
     // Reset state
     setResidue(initialParams);
     setIndex(initialParams);
-    setMutantOpen(false);
     setMutant();
+    navigate(`/${protein.pdb_id}/${protein.type}`);
+    // redirect(`/${protein.pdb_id}/${protein.type}`);
   };
 
   // Changes mode state of ModeRadio
@@ -128,15 +199,35 @@ function ProteinSelector({ protein }) {
   const handleResidueConfirm = async () => {
     if (residue[0] && residue[1]) {
       setResidueOpen(false);
-      setMutantOpen(true);
-      await getMutant();
+      navigate(mutantUrl);
+      await getMutant(mode, index, residue);
     } else {
       setNotification("Please select two residues");
     }
   };
+  // IIFE for creating mutant url
+  const mutantUrl = (() => {
+    const orderedIndex = index instanceof Array ? index.sort() : index;
+    let url = `/${protein.pdb_id}/${protein.type}/${mode}/`;
+    if (mode === "insert") {
+      if (protein.type === "pairwise") {
+        url += `${orderedIndex[0]}/${residue[0]}/${orderedIndex[1]}/${residue[1]}`;
+      } else {
+        url += `${orderedIndex}/${residue}`;
+      }
+    } else {
+      if (protein.type === "pairwise") {
+        url += `${orderedIndex[0]}/${orderedIndex[1]}`;
+      } else {
+        url += `${orderedIndex}`;
+      }
+    }
+    return url;
+  })();
 
-  const getMutant = async () => {
+  const getMutant = async (mode, index, residue) => {
     try {
+      // Order indexes because database always has lower index first
       const orderedIndex = index instanceof Array ? index.sort() : index;
       const response = await axios.post("http://localhost:8080/api/get-mutant", {
         pdb_id: protein.pdb_id,
@@ -146,6 +237,7 @@ function ProteinSelector({ protein }) {
         index: orderedIndex,
         residue,
       });
+
       setMutant(response.data);
     } catch (error) {
       console.error(error);
@@ -172,13 +264,15 @@ function ProteinSelector({ protein }) {
         <Typography variant="h4">{title}</Typography>
         <ModeRadio mode={mode} handleModeChange={handleModeChange} />
         <Box display="flex" flexDirection="column">
-          <HeatmapMaker
-            protein={protein}
-            stage="index"
-            mode={mode}
-            handleIndexChange={handleIndexChange}
-            handleResidueChange={handleResidueChange}
-          />
+          {protein && (
+            <HeatmapMaker
+              protein={protein}
+              stage="index"
+              mode={mode}
+              handleIndexChange={handleIndexChange}
+              handleResidueChange={handleResidueChange}
+            />
+          )}
           <div style={{ marginTop: 16 }} />
           <div>
             {protein.type === "single" ? (
@@ -235,13 +329,7 @@ function ProteinSelector({ protein }) {
         handleConfirm={handleResidueConfirm}
       />
       {mutant && (
-        <Mutant
-          open={mutantOpen}
-          mutant={mutant}
-          type={protein.type}
-          handleClose={handleMutantClose}
-          mode={mode}
-        />
+        <Mutant mutant={mutant} type={protein.type} handleClose={handleMutantClose} mode={mode} />
       )}
       <MolstarViewer pdbStr={protein.wild_type.pdb_data.pdb} />
     </Container>

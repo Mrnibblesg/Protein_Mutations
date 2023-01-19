@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@mui/material";
+import { Box, ThemeProvider } from "@mui/material";
 import "./App.css";
 import NavBar from "./NavBar";
 import Dashboard from "./Dashboard";
@@ -45,7 +45,7 @@ function App() {
                     return (
                       <Route
                         key={protein._id}
-                        path={`${protein.pdb_id}/${protein.type}`}
+                        path={`${protein.pdb_id}/${protein.type}/*`}
                         element={<ProteinSelector protein={protein} />}
                       />
                     );

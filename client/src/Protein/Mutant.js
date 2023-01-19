@@ -11,7 +11,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function Mutant({ open, mutant, handleClose, mode, type }) {
+export default function Mutant({ mutant, handleClose, mode, type }) {
   const download = () => {
     let filename = mutant.pdb_id + mutant.mode;
     if (type === "single") {
@@ -40,7 +40,7 @@ export default function Mutant({ open, mutant, handleClose, mode, type }) {
   return (
     <Dialog
       fullScreen
-      open={open}
+      open
       onClose={handleClose}
       TransitionComponent={Transition}
       TransitionProps={{ unmountOnExit: true }}>
