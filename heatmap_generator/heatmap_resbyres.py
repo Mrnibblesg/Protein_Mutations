@@ -21,6 +21,7 @@ def get_residue_count(pdb_id):
     # if field (sequence) exists in the model then return the length
     if '_entity_poly.pdbx_seq_one_letter_code' in model.keys():
         full_struct = (model['_entity_poly.pdbx_seq_one_letter_code'])
+        print("Residue count length: " + str(len((full_struct[0]))))
         return len((full_struct[0]))
 
 def get_wild_type(pdb_id):
@@ -29,11 +30,16 @@ def get_wild_type(pdb_id):
     file.close()
     return wild_data
 
-# for insertions
+
+#for insertions (THINK THIS NEEDS TO RETURN ONE MUTANT (JSON) INSTEAD OF ALL JSON IN DIRECTORY)
+
 def load_mutants(pdb_id,pos1,pos2,mut_first,mut_second):
 
     mut_data = []
     json_dir = pdb_id + '\\results\\ins\\' + str(10) + '\\' + mut_first + '\\' + str(22) + '\\'
+    #print('json dir: ' + json_dir)
+    print("pos1: " + str(pos1))
+    print("pos2: " + str(pos2))
     try:       
         file = open(json_dir + mut_second + '.json')
         mut_data.append(json.load(file)) 
@@ -42,8 +48,9 @@ def load_mutants(pdb_id,pos1,pos2,mut_first,mut_second):
         print('SKIPPED: '+json_dir + mut_second + '.json') 
     return mut_data
 
-# grabs the names of all residues w/ a given file path
+
 def get_name_list(dir):
+    #dir = pdb_id + '\\results\\ins\\' + str(1) + '\\'
     name_list = os.listdir(dir)
     return name_list
 
@@ -53,10 +60,12 @@ def iterate_cells(rescount):
     for pos1 in range(rescount):
         for pos2 in range(rescount):
             # load all mutants for this position  
-            mutants = load_mutants(pdb_id,pos1,pos2,name_list[pos1],name_list[pos2]) 
+            mutants = load_mutants(pdb_id,pos1,pos2,name_list[pos1],name_list[pos2]) # should maybe just load one mutant?
+            #print('RESCOUNT:')
+            #print(rescount)
             yield (pos1, pos2, mutants)
 
-
+# need to modify to create residue x residue plots for 
 def update_data(pos1, pos2, mut_types, wild_type, data):
     def update_cell(cell, pos1, pos2, val):
         cell[pos1][pos2] = val
@@ -148,6 +157,8 @@ def create_heatmap(data, pdb_id, arr_count, name, name_list):
     ax = sns.heatmap(data, mask=mask, cmap='hot', cbar_kws={'label': name})
 
     ax.invert_yaxis()
+    #print(data.shape)
+    #print(data[1])
     ax.set_xlim([0, data.shape[0]])
     ax.set_ylim([0, data.shape[1]])
     ax.set_xticklabels(name_list)
@@ -187,9 +198,13 @@ if __name__ == '__main__':
         
     print("Creating heatmaps")
     for metric in heatmap_data:
+        #print('METRIC:')
+        #print(metric)
         arr_count = 0
         for agg_method in heatmap_data[metric]:
             arr_count += 1
+            #print('AGG_METHOD:')
+            #print(agg_method)
             create_heatmap(heatmap_data[metric][agg_method], pdb_id, arr_count, f"{metric}_{agg_method}",name_list)
 
 

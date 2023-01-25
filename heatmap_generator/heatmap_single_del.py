@@ -31,25 +31,6 @@ def get_wild_type(pdb_id):
     return wild_data
 
 
-#for SINGLE insertions
-'''
-def load_mutants(pdb_id, pos1, pos2, res_name):
-
-    mut_data = []
-    json_dir = pdb_id +'_Single'+ '\\results\\ins\\' + str(pos1) + '\\'
-
-    #print('json dir: ' + json_dir)
-    print("pos1: " + str(pos1))
-    print("pos2: " + str(pos2))
-    try:
-        file = open(json_dir+res_name)
-        print(json_dir+res_name)
-        mut_data.append(json.load(file))
-    except Exception as e:
-        print('SKIPPED: '+json_dir+res_name) 
-    return mut_data
-'''
-
 #for SINGLE deletions
 def load_mutants(pdb_id, pos1, pos2, res_name):
 
@@ -183,8 +164,7 @@ def create_heatmap(data, pdb_id, arr_count, name, name_list):
     ax = sns.heatmap(data, mask=mask, cmap='hot', cbar_kws={'label': name})
 
     ax.invert_yaxis()
-    #print(data.shape)
-    #print(data[1])
+
     ax.set_xlim(1)
     ax.set_ylim(0,data.shape[0])
     #ax.set_yticklabels(name_list)
@@ -208,7 +188,7 @@ if __name__ == '__main__':
     rescount = get_residue_count(pdb_id)
 
     print("Fetching residue names")
-    dir = pdb_id +'_Single'+'\\results\\ins\\1\\'
+    dir = pdb_id +'_Single'+'\\results\\del\\'
     name_list = trim_file_string(get_name_list(dir))
 
     heatmap_data = defaultdict(lambda: defaultdict(lambda: np.zeros(shape=(1,rescount)))) 

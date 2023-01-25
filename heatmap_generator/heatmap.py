@@ -64,11 +64,11 @@ def load_mutants(pdb_id, pos1, pos2):
     except Exception as e:
         print('reached end of mutants')
     return mut_data
-    '''
-
+'''
 
 
 #for insertions
+
 def load_mutants(pdb_id,pos1,pos2,name_list):
 
     mut_data = []
@@ -90,14 +90,13 @@ def load_mutants(pdb_id,pos1,pos2,name_list):
 def iterate_cells(rescount):
     file_dir = pdb_id + '\\results\\ins\\' + str(1) + '\\' 
     name_list = get_name_list(file_dir)
-    for pos1 in range(1, rescount + 1):
+    for pos1 in range(1, rescount + 2):
         for pos2 in range(pos1 + 1, rescount + 2):
             # load all mutants for this position
-            #mutants = load_mutants(pdb_id,pos1,pos2) # for deletions
-            mutants = load_mutants(pdb_id,pos1,pos2,name_list) # for insertions
+            mutants = load_mutants(pdb_id,pos1,pos2) # for deletions
+            #mutants = load_mutants(pdb_id,pos1,pos2,name_list) # for insertions
             yield (pos1, pos2, mutants)
 
-# need to modify to create residue x residue plots for 
 def update_data(pos1, pos2, mut_types, wild_type, data):
     def update_cell(cell, pos1, pos2, val):
         cell[pos1][pos2] = val
@@ -173,7 +172,7 @@ def create_heatmap(data, pdb_id, arr_count, name):
     
     # dump raw heatmap data for future generation
     
-    dump_dir = '1l2y_PairInsArr_indxind\\'# directory for where the heatmap arrays are dumped
+    dump_dir = '1l2y_PairDelArr_indxind\\'# directory for where the heatmap arrays are dumped
     
     dictionary = {
         "heatmap": data.tolist(),
@@ -216,7 +215,12 @@ if __name__ == '__main__':
     wild_type = get_wild_type(pdb_id)
 
     print("Fetching residue count")
-    rescount = get_residue_count(pdb_id)
+
+    # for insertions
+    # rescount = get_residue_count(pdb_id) 
+
+    # For deletions
+    rescount = get_residue_count(pdb_id) - 1
 
     heatmap_data = defaultdict(lambda: defaultdict(lambda: np.zeros(shape=(rescount+2,rescount+2)))) 
 
