@@ -68,7 +68,6 @@ function ProteinSelector({ protein }) {
           mutantRegEx = new RegExp("^(\\d{1,3})/?$");
           urlIndex = urlMutant.match(mutantRegEx)[1];
         } else {
-          console.log(mutantInfo);
           mutantRegEx = new RegExp("^(\\d{1,3})/(\\d{1,3})/?$");
           mutantInfo = urlMutant.match(mutantRegEx);
           urlIndex = [mutantInfo[1], mutantInfo[2]];
@@ -90,8 +89,10 @@ function ProteinSelector({ protein }) {
       setTimeout(() => {
         // Navigate to protein page if possible, otherwise dashboard
         if (urlPdbId && urlType) {
+          console.log("Here 1");
           navigate(`/${urlPdbId}/${urlType}`);
         } else {
+          console.log("Here 2");
           navigate("/");
         }
       }, 2500);
@@ -105,17 +106,12 @@ function ProteinSelector({ protein }) {
       setIndex(value);
       // Handle pairwise
     } else {
-      // If in position 1
-      if (position) {
-        setIndex((prev) => [prev[0], value]);
-        // If in position 0
-      } else {
-        setIndex((prev) => [value, prev[1]]);
+      if (position === 0) {
+        setIndex([value, index[1]]);
+      } else if (position === 1) {
+        setIndex([index[0], value]);
       }
     }
-  };
-  const handleIdxTextChange = (position) => (e) => {
-    handleIndexChange(e.target.value, position);
   };
   // Only pass in position if pairwise
   const handleResidueChange = (value, position) => {
@@ -207,7 +203,7 @@ function ProteinSelector({ protein }) {
   };
   // IIFE for creating mutant url
   const mutantUrl = (() => {
-    const orderedIndex = index instanceof Array ? index.sort() : index;
+    const orderedIndex = index instanceof Array ? [...index].sort() : index;
     let url = `/${protein.pdb_id}/${protein.type}/${mode}/`;
     if (mode === "insert") {
       if (protein.type === "pairwise") {
@@ -278,7 +274,8 @@ function ProteinSelector({ protein }) {
             {protein.type === "single" ? (
               <TextField
                 value={index}
-                onChange={handleIdxTextChange(null)}
+                onChange={(e) => handleIndexChange(e.target.value)}
+                inputProps={{ "data-testid": "indexTextField" }}
                 variant="outlined"
                 name="indexField"
                 placeholder="Index"
@@ -288,17 +285,23 @@ function ProteinSelector({ protein }) {
               <>
                 <TextField
                   value={index[0]}
-                  onChange={handleIdxTextChange(0)}
+                  onChange={(e) => {
+                    console.log("here 0");
+                    handleIndexChange(e.target.value, 0);
+                  }}
+                  inputProps={{ "data-testid": "indexTextField" }}
                   variant="outlined"
-                  name="indexField"
                   placeholder="First Index"
                   sx={{ mr: 2, width: 130 }}
                 />
                 <TextField
                   value={index[1]}
-                  onChange={handleIdxTextChange(1)}
+                  onChange={(e) => {
+                    console.log("here 1");
+                    handleIndexChange(e.target.value, 1);
+                  }}
+                  inputProps={{ "data-testid": "indexTextField" }}
                   variant="outlined"
-                  name="indexField"
                   placeholder="Second Index"
                   sx={{ width: 130 }}
                 />

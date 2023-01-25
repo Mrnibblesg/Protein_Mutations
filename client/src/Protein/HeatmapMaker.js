@@ -241,6 +241,7 @@ export default function HeatmapMaker({
             height={25 * yAxisCount}
             width={25 * xAxisCount}
             data={data}
+            data-testid="heatmap"
             xAxis={
               <LinearXAxis
                 type="category"

@@ -1,7 +1,6 @@
-export default {
+const base = {
   _id: "635f140122a1f757d1191395",
   pdb_id: "1crn",
-  type: "pairwise",
   residue_count: 46,
   wild_type: {
     _id: "622cdf143c73cada1f2b17ca",
@@ -10,3 +9,6 @@ export default {
     },
   },
 };
+
+export const single = { ...base, type: "single" };
+export const pairwise = { ...base, type: "pairwise" };

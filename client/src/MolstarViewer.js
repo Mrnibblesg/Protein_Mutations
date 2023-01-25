@@ -4,12 +4,14 @@ import createMolstarViewer from "./molstar";
 
 export default function MolstarViewer({ pdbStr, mutant }) {
   const molstarRef = useRef();
-
   useEffect(() => {
     const createViewer = async () => {
       await createMolstarViewer(molstarRef.current, pdbStr);
     };
-    createViewer();
+    // So molstar doesn't mess up testing
+    if (process.env.NODE_ENV !== "test") {
+      createViewer();
+    }
   }, [pdbStr, mutant]);
 
   return (
