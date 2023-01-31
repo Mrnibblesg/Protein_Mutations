@@ -105,12 +105,18 @@ function ProteinSelector({ protein }) {
     if (protein.type === "single") {
       setIndex(value);
       // Handle pairwise
+      
     } else {
+        setIndex([5, index[1]]);
+        setIndex([index[0], 3]);
+        /*
       if (position === 0) {
+        console.log(index);
         setIndex([value, index[1]]);
+        console.log(index);
       } else if (position === 1) {
         setIndex([index[0], value]);
-      }
+      }*/
     }
   };
   // Only pass in position if pairwise
