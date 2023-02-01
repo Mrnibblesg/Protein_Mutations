@@ -134,7 +134,6 @@ export default function HeatmapMaker({
   let squareClicked = (square) => {
     let column = square.value.key;
     let row = square.value.x;
-    console.log(column, row);
     // X axis defaults to first text field, Y axis defaults to second
     if (protein.type === "single") {
       handleIndexChange(column);

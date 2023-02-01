@@ -136,8 +136,16 @@ function ProteinSelector({ protein }) {
 
   // Returns true if in bounds, false if not
   const checkBound = (index) => {
-    const upperBound = mode === "insert" ? protein.residue_count + 2 : protein.residue_count;
-    return index >= 1 && index <= upperBound;
+      let upperLimit = protein.residue_count;
+      if (protein.type != "single"){
+          if (mode === "insert"){
+              upperLimit += 1;
+          }
+          else{
+              upperLimit -= 1;
+          }
+      }
+    return index >= 1 && index <= upperLimit;
   };
   // Confirm navigation to next stage, locks in index/residue
   // For pairwise insert, will render ResidueSelector with new heatmap
