@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/system";
 import {
   Heatmap,
@@ -13,13 +13,6 @@ import {
 } from "reaviz";
 import { shortResidues as residues } from "../common/residues";
 import axios from "axios";
-import {
-  singleInsert,
-  singleDelete,
-  pairwiseInsertRes,
-  pairwiseInsertIdx,
-  pairwiseDelete,
-} from "../common/heatmaps";
 import { Typography } from "@mui/material";
 
 // Generate heatmap based on type of protein and mode
@@ -74,64 +67,92 @@ export default function HeatmapMaker({
   let xAxisCount;
   let yAxisCount;
 
-  const heatmap = () => {
-    
-    const data = axios.post("http://localhost:8080/api/heatmap/get-heatmap", {
-    pdb_id: "1l2y",
-    mode: "ins",
-    type: "resxres",
-    index: [1,2]
-    })
-    .then((resp) => {
-      console.log(resp)
-      return resp.data.heatmap})
-    .catch((error) => {
-      console.log(error); 
-    })
+  let [heatmap, setHeatmap] = useState();
+  let [data, setData] = useState();
 
+  let [loading, setLoading] = useState();
+
+  useEffect(() => {
+    console.log("Fetching heatmap");
+    const heatmapRequest = {
+        pdb_id: protein.pdb_id,
+        metric: "lrc_dist",
+        mode: undefined,
+        type: undefined,
+        index: undefined //Only used if type is "resxres"
+    };
 
     if (protein.pdb_id === "1l2y") {
       if (protein.type === "single") {
         if (mode === "insert") {
-          return singleInsert;
+          heatmapRequest.mode = "ins";
+          heatmapRequest.type = "resxind";
+          
         } else {
-          return singleDelete;
+          heatmapRequest.mode = "del";
+          heatmapRequest.type = "ind";
+          
         }
       } else {
         if (mode === "insert") {
           if (stage === "index") {
-            return pairwiseInsertIdx;
+            heatmapRequest.mode = "ins";
+            heatmapRequest.type = "indxind";
+            
           } else {
-            return pairwiseInsertRes;
+            heatmapRequest.mode = "ins";
+            heatmapRequest.type = "resxres";
+            heatmapRequest.index = [1,2];
+            
           }
         } else {
-          return pairwiseDelete;
+          heatmapRequest.mode = "del";
+          heatmapRequest.type = "indxind";
+          
         }
       }
-    } else {
-      return null;
     }
-  };
+
+    const fetchHeatmap = async () => {
+      const DBHeatmapData = await axios.post("http://localhost:8080/api/heatmap/get-heatmap", heatmapRequest)
+      .then((resp) => {
+        setHeatmap(resp.data.heatmap);
+        let data = constructData();
+        setData(constructData());
+
+      })
+      .catch((error) => {
+        console.log(error); 
+      });
+    };
+    fetchHeatmap();
+
+  }, [mode]);
 
   //Constructs data from what the proper labels for each axis is, and the heat data inside of protein.
-  let constructData = (xAxisLabels, yAxisLabels) => {
+  let constructData = () => {
     let data = [];
-    const graph = heatmap();
+    const graph = heatmap;
     if (!graph) {
+        console.log("Graph is null");
       return null;
     }
 
     //We must keep this until the extra column of 0s is removed from the data on the DB.
     const xLength =
-      protein.type === "single" && mode === "delete" ? xAxisLabels.length : xAxisLabels.length - 1;
+      protein.type === "single" && mode === "delete" ? xAxis.length : xAxis.length - 1;
     const yLength =
-      protein.type === "single" && mode === "delete" ? yAxisLabels.length : yAxisLabels.length - 1;
+      protein.type === "single" && mode === "delete" ? yAxis.length : yAxis.length - 1;
 
+    console.log(graph);
+    console.log("xLength: " + xLength);
+    console.log("yLength: " + yLength);
     for (let i = 0; i < xLength; i++) {
-      let column = { key: xAxisLabels[i], data: [] };
+      let column = { key: xAxis[i], data: [] };
       for (let j = 0; j < yLength; j++) {
+
         let heat = graph[j][i];
-        let square = { key: yAxisLabels[j], data: heat };
+        let square = { key: yAxis[j], data: heat };
 
         //Heat is null (shows as a black square) if there is no heatmap data for the square, or
         //if the indices are the same on a pairwise indel index x index heatmap.
@@ -229,30 +250,8 @@ export default function HeatmapMaker({
       }
     }
   }
-  
 
-  //Here is some sample data so you can get an idea of the format.
-  /*const data = [
-  {
-    key: 'Lateral Movement',
-    data: [
-      {key: 'XML',data: 0},
-      {key: 'JSON',data: 120},
-      {key: 'HTTPS',data: 150}
-    ]
-  },
-  {
-    key: 'Discovery',
-    data: [
-      {key: 'XML', data: 100},
-      {key: 'JSON', data: 34},
-      {key: 'HTTPS', data: 0}
-    ]
-  }
-];*/
-  
   getAxes();
-  let data = constructData(xAxis, yAxis);
 
   let heatmapContainer = (
     <Box id="mainHeatmapContainer" display="flex" alignItems="center">
