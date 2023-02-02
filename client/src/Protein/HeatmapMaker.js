@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box } from "@mui/system";
 import {
   Heatmap,
@@ -12,6 +12,7 @@ import {
   LinearAxisTickLine,
 } from "reaviz";
 import { shortResidues as residues } from "../common/residues";
+import axios from "axios";
 import {
   singleInsert,
   singleDelete,
@@ -74,6 +75,21 @@ export default function HeatmapMaker({
   let yAxisCount;
 
   const heatmap = () => {
+    
+    const data = axios.post("http://localhost:8080/api/heatmap/get-heatmap", {
+    pdb_id: "1l2y",
+    mode: "ins",
+    type: "resxres",
+    index: [1,2]
+    })
+    .then((resp) => {
+      console.log(resp)
+      return resp.data.heatmap})
+    .catch((error) => {
+      console.log(error); 
+    })
+
+
     if (protein.pdb_id === "1l2y") {
       if (protein.type === "single") {
         if (mode === "insert") {
@@ -159,20 +175,50 @@ export default function HeatmapMaker({
   //Update the heatMapSize if we know the indices will be more than
   //the original residue amount. So, on insertions and an additional one
   //if the protein is pairwise.
-  if (mode === "insert") {
-    heatMapSize += 1;
-    if (protein.type === "single") {
-      // Generate heatmap with insert index on x axis, residue on y axis
-      xAxis = Array(heatMapSize)
-        .fill(0)
-        .map((el, index) => (el = index + 1));
-      yAxis = residues;
-      xAxisCount = heatMapSize;
-      yAxisCount = residues.length;
-    } else {
+  const getAxes = () => {
+    if (mode === "insert") {
       heatMapSize += 1;
-      if (stage === "index") {
-        // Generate heatmap with insert index on both axes
+      if (protein.type === "single") {
+        // Generate heatmap with insert index on x axis, residue on y axis
+        xAxis = Array(heatMapSize)
+          .fill(0)
+          .map((el, index) => (el = index + 1));
+        yAxis = residues;
+        xAxisCount = heatMapSize;
+        yAxisCount = residues.length;
+      } else {
+        heatMapSize += 1;
+        if (stage === "index") {
+          // Generate heatmap with insert index on both axes
+          xAxis = Array(heatMapSize)
+            .fill(0)
+            .map((el, index) => (el = index + 1));
+          yAxis = Array(heatMapSize)
+            .fill(0)
+            .map((el, index) => (el = index + 1));
+          xAxisCount = heatMapSize;
+          yAxisCount = heatMapSize;
+        } else if (stage === "residue") {
+          // Generate heatmap with residues on both axes
+          xAxis = residues;
+          yAxis = residues;
+          xAxisCount = residues.length;
+          yAxisCount = residues.length;
+        } else {
+          throw "Should have defined stage for pairwise insert";
+        }
+      }
+    } else if (mode === "delete") {
+      if (protein.type === "single") {
+        // Only one axis for this heatmap. The heatmap will display as a line of squares.
+        xAxis = Array(heatMapSize)
+          .fill(0)
+          .map((el, index) => (el = index + 1));
+        yAxis = ["-"];
+        xAxisCount = heatMapSize;
+        yAxisCount = 1;
+      } else {
+        // Generate heatmap with delete indexes on both axes
         xAxis = Array(heatMapSize)
           .fill(0)
           .map((el, index) => (el = index + 1));
@@ -181,37 +227,10 @@ export default function HeatmapMaker({
           .map((el, index) => (el = index + 1));
         xAxisCount = heatMapSize;
         yAxisCount = heatMapSize;
-      } else if (stage === "residue") {
-        // Generate heatmap with residues on both axes
-        xAxis = residues;
-        yAxis = residues;
-        xAxisCount = residues.length;
-        yAxisCount = residues.length;
-      } else {
-        throw "Should have defined stage for pairwise insert";
       }
     }
-  } else if (mode === "delete") {
-    if (protein.type === "single") {
-      // Only one axis for this heatmap. The heatmap will display as a line of squares.
-      xAxis = Array(heatMapSize)
-        .fill(0)
-        .map((el, index) => (el = index + 1));
-      yAxis = ["-"];
-      xAxisCount = heatMapSize;
-      yAxisCount = 1;
-    } else {
-      // Generate heatmap with delete indexes on both axes
-      xAxis = Array(heatMapSize)
-        .fill(0)
-        .map((el, index) => (el = index + 1));
-      yAxis = Array(heatMapSize)
-        .fill(0)
-        .map((el, index) => (el = index + 1));
-      xAxisCount = heatMapSize;
-      yAxisCount = heatMapSize;
-    }
   }
+  
 
   //Here is some sample data so you can get an idea of the format.
   /*const data = [
@@ -232,6 +251,8 @@ export default function HeatmapMaker({
     ]
   }
 ];*/
+  
+  getAxes();
   let data = constructData(xAxis, yAxis);
 
   let heatmapContainer = (
