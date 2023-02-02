@@ -56,8 +56,6 @@ export default function HeatmapMaker({
     "#fdfcc1",
   ];
 
-  //CURRENTLY HARDCODED TO TEST BEFORE ACTUAL DATA IS ROUTED THROUGH!!!
-
   //the amount of indices for the heatmap to display
   let heatMapSize = protein.residue_count;
 
@@ -70,56 +68,53 @@ export default function HeatmapMaker({
   let [heatmap, setHeatmap] = useState();
   let [data, setData] = useState();
 
-  let [loading, setLoading] = useState();
+  let [loading, setLoading] = useState(true);
 
   useEffect(() => {
     console.log("Fetching heatmap");
-    const heatmapRequest = {
+    let heatmapRequest = {
         pdb_id: protein.pdb_id,
         metric: "lrc_dist",
         mode: undefined,
         type: undefined,
         index: undefined //Only used if type is "resxres"
     };
-
-    if (protein.pdb_id === "1l2y") {
-      if (protein.type === "single") {
-        if (mode === "insert") {
+    if (protein.type === "single") {
+      if (mode === "insert") {
+        heatmapRequest.mode = "ins";
+        heatmapRequest.type = "resxind";
+      } 
+      else {
+        heatmapRequest.mode = "del";
+        heatmapRequest.type = "ind";
+      }
+    }
+    else {
+      if (mode === "insert") {
+        if (stage === "index") {
+        heatmapRequest.mode = "ins";
+        heatmapRequest.type = "indxind";
+            
+        }
+        else {
           heatmapRequest.mode = "ins";
-          heatmapRequest.type = "resxind";
-          
-        } else {
-          heatmapRequest.mode = "del";
-          heatmapRequest.type = "ind";
-          
+        heatmapRequest.type = "resxres";
+        heatmapRequest.index = [1,2];
         }
-      } else {
-        if (mode === "insert") {
-          if (stage === "index") {
-            heatmapRequest.mode = "ins";
-            heatmapRequest.type = "indxind";
-            
-          } else {
-            heatmapRequest.mode = "ins";
-            heatmapRequest.type = "resxres";
-            heatmapRequest.index = [1,2];
-            
-          }
-        } else {
-          heatmapRequest.mode = "del";
-          heatmapRequest.type = "indxind";
-          
-        }
+      }
+      else {
+        heatmapRequest.mode = "del";
+        heatmapRequest.type = "indxind";
       }
     }
 
     const fetchHeatmap = async () => {
+      setLoading(true);
       const DBHeatmapData = await axios.post("http://localhost:8080/api/heatmap/get-heatmap", heatmapRequest)
       .then((resp) => {
         setHeatmap(resp.data.heatmap);
-        let data = constructData();
         setData(constructData());
-
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error); 
@@ -144,9 +139,10 @@ export default function HeatmapMaker({
     const yLength =
       protein.type === "single" && mode === "delete" ? yAxis.length : yAxis.length - 1;
 
-    console.log(graph);
-    console.log("xLength: " + xLength);
-    console.log("yLength: " + yLength);
+    //console.log("heatmap: ");
+    //console.log(graph);
+    //console.log("xLength: " + xLength);
+    //console.log("yLength: " + yLength);
     for (let i = 0; i < xLength; i++) {
       let column = { key: xAxis[i], data: [] };
       for (let j = 0; j < yLength; j++) {
@@ -255,7 +251,8 @@ export default function HeatmapMaker({
 
   let heatmapContainer = (
     <Box id="mainHeatmapContainer" display="flex" alignItems="center">
-      {data ? (
+      {!loading ? (
+        data ? (
         <>
           <Heatmap
             height={25 * yAxisCount}
@@ -298,9 +295,13 @@ export default function HeatmapMaker({
             style={{ height: 25 * (yAxisCount - 1), marginLeft: "10px", minHeight: 100 }}
           />
         </>
+        ) : (
+          <Typography variant="h4" gutterBottom>
+            There was an error loading the heatmap, try a different protein (1l2y, probably)
+          </Typography> )
       ) : (
         <Typography variant="h4" gutterBottom>
-          There was an error loading the heatmap, try a different protein (1l2y, probably)
+          Loading...
         </Typography>
       )}
     </Box>
