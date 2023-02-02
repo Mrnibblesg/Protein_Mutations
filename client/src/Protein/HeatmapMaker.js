@@ -99,7 +99,7 @@ export default function HeatmapMaker({
         else {
           heatmapRequest.mode = "ins";
         heatmapRequest.type = "resxres";
-        heatmapRequest.index = [1,2];
+        heatmapRequest.index = [1,2]; //Placeholder
         }
       }
       else {
@@ -112,8 +112,7 @@ export default function HeatmapMaker({
       setLoading(true);
       const DBHeatmapData = await axios.post("http://localhost:8080/api/heatmap/get-heatmap", heatmapRequest)
       .then((resp) => {
-        setHeatmap(resp.data.heatmap);
-        setData(constructData());
+        setData(constructData(resp.data.heatmap));
         setLoading(false);
       })
       .catch((error) => {
@@ -125,11 +124,11 @@ export default function HeatmapMaker({
   }, [mode]);
 
   //Constructs data from what the proper labels for each axis is, and the heat data inside of protein.
-  let constructData = () => {
+  let constructData = (heatmap) => {
     let data = [];
-    const graph = heatmap;
-    if (!graph) {
-        console.log("Graph is null");
+    
+    if (!heatmap) {
+        console.log("Heatmap is null");
       return null;
     }
 
@@ -139,15 +138,11 @@ export default function HeatmapMaker({
     const yLength =
       protein.type === "single" && mode === "delete" ? yAxis.length : yAxis.length - 1;
 
-    //console.log("heatmap: ");
-    //console.log(graph);
-    //console.log("xLength: " + xLength);
-    //console.log("yLength: " + yLength);
     for (let i = 0; i < xLength; i++) {
       let column = { key: xAxis[i], data: [] };
       for (let j = 0; j < yLength; j++) {
 
-        let heat = graph[j][i];
+        let heat = heatmap[j][i];
         let square = { key: yAxis[j], data: heat };
 
         //Heat is null (shows as a black square) if there is no heatmap data for the square, or
