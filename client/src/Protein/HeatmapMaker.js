@@ -110,8 +110,11 @@ export default function HeatmapMaker({
 
     const fetchHeatmap = async () => {
       setLoading(true);
+      console.log("Heatmap request: ");
+      console.log(heatmapRequest);
       const DBHeatmapData = await axios.post("http://localhost:8080/api/heatmap/get-heatmap", heatmapRequest)
       .then((resp) => {
+        console.log(resp);
         setData(constructData(resp.data.heatmap));
         setLoading(false);
       })
@@ -133,14 +136,15 @@ export default function HeatmapMaker({
     }
 
     //We must keep this until the extra column of 0s is removed from the data on the DB.
-    const xLength =
+    /*const xLength =
       protein.type === "single" && mode === "delete" ? xAxis.length : xAxis.length - 1;
     const yLength =
-      protein.type === "single" && mode === "delete" ? yAxis.length : yAxis.length - 1;
-
-    for (let i = 0; i < xLength; i++) {
+      protein.type === "single" && mode === "delete" ? yAxis.length : yAxis.length - 1;*/
+    console.log(xAxisCount);
+    console.log(yAxisCount);
+    for (let i = 0; i < xAxisCount; i++) {
       let column = { key: xAxis[i], data: [] };
-      for (let j = 0; j < yLength; j++) {
+      for (let j = 0; j < yAxisCount; j++) {
 
         let heat = heatmap[j][i];
         let square = { key: yAxis[j], data: heat };
@@ -198,7 +202,7 @@ export default function HeatmapMaker({
         xAxisCount = heatMapSize;
         yAxisCount = residues.length;
       } else {
-        heatMapSize += 1;
+        //heatMapSize += 1;
         if (stage === "index") {
           // Generate heatmap with insert index on both axes
           xAxis = Array(heatMapSize)
