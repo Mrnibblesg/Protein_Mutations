@@ -107,9 +107,9 @@ function ProteinSelector({ protein }) {
       // Handle pairwise
     } else {
       if (position === 0) {
-        setIndex([value, index[1]]);
+        setIndex((prevValue) => [value, prevValue[1]]);
       } else if (position === 1) {
-        setIndex([index[0], value]);
+        setIndex((prevValue) => [prevValue[0], value]);
       }
     }
   };
@@ -136,8 +136,16 @@ function ProteinSelector({ protein }) {
 
   // Returns true if in bounds, false if not
   const checkBound = (index) => {
-    const upperBound = mode === "insert" ? protein.residue_count + 2 : protein.residue_count;
-    return index >= 1 && index <= upperBound;
+      let upperLimit = protein.residue_count;
+      if (protein.type != "single"){
+          if (mode === "insert"){
+              upperLimit += 1;
+          }
+          else{
+              upperLimit -= 1;
+          }
+      }
+    return index >= 1 && index <= upperLimit;
   };
   // Confirm navigation to next stage, locks in index/residue
   // For pairwise insert, will render ResidueSelector with new heatmap
@@ -326,6 +334,7 @@ function ProteinSelector({ protein }) {
         protein={protein}
         residue={residue}
         mode={mode}
+        index={index}
         handleChange={handleResTextChange}
         handleResidueChange={handleResidueChange}
         handleClose={handleResidueClose}

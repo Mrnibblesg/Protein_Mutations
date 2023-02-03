@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/system";
 import {
   Heatmap,
@@ -12,13 +12,7 @@ import {
   LinearAxisTickLine,
 } from "reaviz";
 import { shortResidues as residues } from "../common/residues";
-import {
-  singleInsert,
-  singleDelete,
-  pairwiseInsertRes,
-  pairwiseInsertIdx,
-  pairwiseDelete,
-} from "../common/heatmaps";
+import axios from "axios";
 import { Typography } from "@mui/material";
 
 // Generate heatmap based on type of protein and mode
@@ -27,6 +21,7 @@ export default function HeatmapMaker({
   protein,
   stage,
   mode,
+  index,
   handleIndexChange,
   handleResidueChange,
 }) {
@@ -62,8 +57,6 @@ export default function HeatmapMaker({
     "#fdfcc1",
   ];
 
-  //CURRENTLY HARDCODED TO TEST BEFORE ACTUAL DATA IS ROUTED THROUGH!!!
-
   //the amount of indices for the heatmap to display
   let heatMapSize = protein.residue_count;
 
@@ -73,49 +66,82 @@ export default function HeatmapMaker({
   let xAxisCount;
   let yAxisCount;
 
-  const heatmap = () => {
-    if (protein.pdb_id === "1l2y") {
-      if (protein.type === "single") {
-        if (mode === "insert") {
-          return singleInsert;
-        } else {
-          return singleDelete;
+  let [heatmap, setHeatmap] = useState();
+  let [data, setData] = useState();
+
+  let [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let heatmapRequest = {
+        pdb_id: protein.pdb_id,
+        metric: "lrc_dist",
+        mode: undefined,
+        type: undefined,
+        index: undefined //Only used if type is "resxres"
+    };
+    if (protein.type === "single") {
+      if (mode === "insert") {
+        heatmapRequest.mode = "ins";
+        heatmapRequest.type = "resxind";
+      } 
+      else {
+        heatmapRequest.mode = "del";
+        heatmapRequest.type = "ind";
+      }
+    }
+    else {
+      if (mode === "insert") {
+        if (stage === "index") {
+        heatmapRequest.mode = "ins";
+        heatmapRequest.type = "indxind";
+            
         }
-      } else {
-        if (mode === "insert") {
-          if (stage === "index") {
-            return pairwiseInsertIdx;
-          } else {
-            return pairwiseInsertRes;
-          }
-        } else {
-          return pairwiseDelete;
+        else {
+          heatmapRequest.mode = "ins";
+          heatmapRequest.type = "resxres";
+          heatmapRequest.index = index.sort();
         }
       }
-    } else {
-      return null;
+      else {
+        heatmapRequest.mode = "del";
+        heatmapRequest.type = "indxind";
+      }
     }
-  };
+
+    const fetchHeatmap = async () => {
+      setLoading(true);
+      //console.log("Heatmap request: ");
+      //console.log(heatmapRequest);
+      const DBHeatmapData = await axios.post("http://localhost:8080/api/heatmap/get-heatmap", heatmapRequest)
+      .then((resp) => {
+        //console.log("Response: ");
+        //console.log(resp);
+        setData(constructData(resp.data.heatmap));
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error); 
+      });
+    };
+    fetchHeatmap();
+
+  }, [mode, index]);
 
   //Constructs data from what the proper labels for each axis is, and the heat data inside of protein.
-  let constructData = (xAxisLabels, yAxisLabels) => {
+  let constructData = (heatmap) => {
     let data = [];
-    const graph = heatmap();
-    if (!graph) {
+    
+    if (!heatmap) {
+        console.log("Heatmap is null");
       return null;
     }
 
-    //We must keep this until the extra column of 0s is removed from the data on the DB.
-    const xLength =
-      protein.type === "single" && mode === "delete" ? xAxisLabels.length : xAxisLabels.length - 1;
-    const yLength =
-      protein.type === "single" && mode === "delete" ? yAxisLabels.length : yAxisLabels.length - 1;
+    for (let i = 0; i < xAxisCount; i++) {
+      let column = { key: xAxis[i], data: [] };
+      for (let j = 0; j < yAxisCount; j++) {
 
-    for (let i = 0; i < xLength; i++) {
-      let column = { key: xAxisLabels[i], data: [] };
-      for (let j = 0; j < yLength; j++) {
-        let heat = graph[j][i];
-        let square = { key: yAxisLabels[j], data: heat };
+        let heat = heatmap[j][i];
+        let square = { key: yAxis[j], data: heat };
 
         //Heat is null (shows as a black square) if there is no heatmap data for the square, or
         //if the indices are the same on a pairwise indel index x index heatmap.
@@ -158,20 +184,50 @@ export default function HeatmapMaker({
   //Update the heatMapSize if we know the indices will be more than
   //the original residue amount. So, on insertions and an additional one
   //if the protein is pairwise.
-  if (mode === "insert") {
-    heatMapSize += 1;
-    if (protein.type === "single") {
-      // Generate heatmap with insert index on x axis, residue on y axis
-      xAxis = Array(heatMapSize)
-        .fill(0)
-        .map((el, index) => (el = index + 1));
-      yAxis = residues;
-      xAxisCount = heatMapSize;
-      yAxisCount = residues.length;
-    } else {
+  const getAxes = () => {
+    if (mode === "insert") {
       heatMapSize += 1;
-      if (stage === "index") {
-        // Generate heatmap with insert index on both axes
+      if (protein.type === "single") {
+        // Generate heatmap with insert index on x axis, residue on y axis
+        xAxis = Array(heatMapSize)
+          .fill(0)
+          .map((el, index) => (el = index + 1));
+        yAxis = residues;
+        xAxisCount = heatMapSize;
+        yAxisCount = residues.length;
+      } else {
+        //heatMapSize += 1;
+        if (stage === "index") {
+          // Generate heatmap with insert index on both axes
+          xAxis = Array(heatMapSize)
+            .fill(0)
+            .map((el, index) => (el = index + 1));
+          yAxis = Array(heatMapSize)
+            .fill(0)
+            .map((el, index) => (el = index + 1));
+          xAxisCount = heatMapSize;
+          yAxisCount = heatMapSize;
+        } else if (stage === "residue") {
+          // Generate heatmap with residues on both axes
+          xAxis = residues;
+          yAxis = residues;
+          xAxisCount = residues.length;
+          yAxisCount = residues.length;
+        } else {
+          throw "Should have defined stage for pairwise insert";
+        }
+      }
+    } else if (mode === "delete") {
+      if (protein.type === "single") {
+        // Only one axis for this heatmap. The heatmap will display as a line of squares.
+        xAxis = Array(heatMapSize)
+          .fill(0)
+          .map((el, index) => (el = index + 1));
+        yAxis = ["-"];
+        xAxisCount = heatMapSize;
+        yAxisCount = 1;
+      } else {
+        // Generate heatmap with delete indexes on both axes
         xAxis = Array(heatMapSize)
           .fill(0)
           .map((el, index) => (el = index + 1));
@@ -180,66 +236,20 @@ export default function HeatmapMaker({
           .map((el, index) => (el = index + 1));
         xAxisCount = heatMapSize;
         yAxisCount = heatMapSize;
-      } else if (stage === "residue") {
-        // Generate heatmap with residues on both axes
-        xAxis = residues;
-        yAxis = residues;
-        xAxisCount = residues.length;
-        yAxisCount = residues.length;
-      } else {
-        throw "Should have defined stage for pairwise insert";
       }
-    }
-  } else if (mode === "delete") {
-    if (protein.type === "single") {
-      // Only one axis for this heatmap. The heatmap will display as a line of squares.
-      xAxis = Array(heatMapSize)
-        .fill(0)
-        .map((el, index) => (el = index + 1));
-      yAxis = ["-"];
-      xAxisCount = heatMapSize;
-      yAxisCount = 1;
-    } else {
-      // Generate heatmap with delete indexes on both axes
-      xAxis = Array(heatMapSize)
-        .fill(0)
-        .map((el, index) => (el = index + 1));
-      yAxis = Array(heatMapSize)
-        .fill(0)
-        .map((el, index) => (el = index + 1));
-      xAxisCount = heatMapSize;
-      yAxisCount = heatMapSize;
     }
   }
 
-  //Here is some sample data so you can get an idea of the format.
-  /*const data = [
-  {
-    key: 'Lateral Movement',
-    data: [
-      {key: 'XML',data: 0},
-      {key: 'JSON',data: 120},
-      {key: 'HTTPS',data: 150}
-    ]
-  },
-  {
-    key: 'Discovery',
-    data: [
-      {key: 'XML', data: 100},
-      {key: 'JSON', data: 34},
-      {key: 'HTTPS', data: 0}
-    ]
-  }
-];*/
-  let data = constructData(xAxis, yAxis);
+  getAxes();
 
   let heatmapContainer = (
     <Box id="mainHeatmapContainer" display="flex" alignItems="center">
-      {data ? (
+      {!loading ? (
+        data ? (
         <>
           <Heatmap
-            height={25 * yAxisCount}
-            width={25 * xAxisCount}
+            height={25 * (yAxisCount+1)+9}
+            width={25 * (xAxisCount+1)}
             data={data}
             data-testid="heatmap"
             xAxis={
@@ -278,9 +288,13 @@ export default function HeatmapMaker({
             style={{ height: 25 * (yAxisCount - 1), marginLeft: "10px", minHeight: 100 }}
           />
         </>
+        ) : (
+          <Typography variant="h4" gutterBottom>
+            There was an error loading the heatmap, try a different protein (1l2y, probably)
+          </Typography> )
       ) : (
         <Typography variant="h4" gutterBottom>
-          There was an error loading the heatmap, try a different protein (1l2y, probably)
+          Loading...
         </Typography>
       )}
     </Box>
