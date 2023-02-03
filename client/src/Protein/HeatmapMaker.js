@@ -99,7 +99,7 @@ export default function HeatmapMaker({
         else {
           heatmapRequest.mode = "ins";
           heatmapRequest.type = "resxres";
-          heatmapRequest.index = index;
+          heatmapRequest.index = index.sort();
         }
       }
       else {
