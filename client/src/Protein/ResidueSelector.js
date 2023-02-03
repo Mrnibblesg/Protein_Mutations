@@ -14,6 +14,7 @@ export default function ResidueSelector({
   protein,
   handleClose,
   mode,
+  index,
   residue,
   handleChange,
   handleConfirm,
@@ -35,6 +36,7 @@ export default function ResidueSelector({
         <HeatmapMaker
           protein={protein}
           mode={mode}
+          index={index}
           stage="residue"
           handleResidueChange={handleResidueChange}
         />

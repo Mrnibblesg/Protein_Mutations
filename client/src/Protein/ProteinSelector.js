@@ -334,6 +334,7 @@ function ProteinSelector({ protein }) {
         protein={protein}
         residue={residue}
         mode={mode}
+        index={index}
         handleChange={handleResTextChange}
         handleResidueChange={handleResidueChange}
         handleClose={handleResidueClose}

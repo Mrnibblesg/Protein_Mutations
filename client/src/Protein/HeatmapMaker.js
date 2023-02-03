@@ -21,6 +21,7 @@ export default function HeatmapMaker({
   protein,
   stage,
   mode,
+  index,
   handleIndexChange,
   handleResidueChange,
 }) {
@@ -71,7 +72,6 @@ export default function HeatmapMaker({
   let [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("Fetching heatmap");
     let heatmapRequest = {
         pdb_id: protein.pdb_id,
         metric: "lrc_dist",
@@ -98,8 +98,8 @@ export default function HeatmapMaker({
         }
         else {
           heatmapRequest.mode = "ins";
-        heatmapRequest.type = "resxres";
-        heatmapRequest.index = [1,2]; //Placeholder
+          heatmapRequest.type = "resxres";
+          heatmapRequest.index = index;
         }
       }
       else {
@@ -110,11 +110,12 @@ export default function HeatmapMaker({
 
     const fetchHeatmap = async () => {
       setLoading(true);
-      console.log("Heatmap request: ");
-      console.log(heatmapRequest);
+      //console.log("Heatmap request: ");
+      //console.log(heatmapRequest);
       const DBHeatmapData = await axios.post("http://localhost:8080/api/heatmap/get-heatmap", heatmapRequest)
       .then((resp) => {
-        console.log(resp);
+        //console.log("Response: ");
+        //console.log(resp);
         setData(constructData(resp.data.heatmap));
         setLoading(false);
       })
@@ -124,7 +125,7 @@ export default function HeatmapMaker({
     };
     fetchHeatmap();
 
-  }, [mode]);
+  }, [mode, index]);
 
   //Constructs data from what the proper labels for each axis is, and the heat data inside of protein.
   let constructData = (heatmap) => {
@@ -135,13 +136,6 @@ export default function HeatmapMaker({
       return null;
     }
 
-    //We must keep this until the extra column of 0s is removed from the data on the DB.
-    /*const xLength =
-      protein.type === "single" && mode === "delete" ? xAxis.length : xAxis.length - 1;
-    const yLength =
-      protein.type === "single" && mode === "delete" ? yAxis.length : yAxis.length - 1;*/
-    console.log(xAxisCount);
-    console.log(yAxisCount);
     for (let i = 0; i < xAxisCount; i++) {
       let column = { key: xAxis[i], data: [] };
       for (let j = 0; j < yAxisCount; j++) {
