@@ -254,8 +254,8 @@ export default function HeatmapMaker({
         data ? (
         <>
           <Heatmap
-            height={25 * yAxisCount}
-            width={25 * xAxisCount}
+            height={25 * (yAxisCount+1)+9}
+            width={25 * (xAxisCount+1)}
             data={data}
             data-testid="heatmap"
             xAxis={
