@@ -11,7 +11,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function Mutant({ mutant, handleClose, mode, type }) {
+export default function Mutant({ mutant, handleClose, mode, type, metric, metricValue }) {
   const download = () => {
     let filename = mutant.pdb_id + mutant.mode;
     if (type === "single") {
@@ -26,6 +26,14 @@ export default function Mutant({ mutant, handleClose, mode, type }) {
     filename += ".json";
     FileDownload(JSON.stringify(mutant), filename);
   };
+  const getMetricText = (metric) => {
+    switch(metric){
+      case "lrc_dist":
+      return "Least rigid cluster distance";
+      default:
+      return "Unknown metric"
+    }
+  }
 
   const title =
     type === "single"
@@ -62,9 +70,12 @@ export default function Mutant({ mutant, handleClose, mode, type }) {
         </Box>
         {mutant && <MolstarViewer pdbStr={mutant.pdb_data?.pdb} mutant={mutant} />}
         {/* Maybe having loading thing when mutant is falsy */}
-        {<p sx={{ alignItems: "center" }}>Hbond count: {mutant.hbond_count}</p>}
+        <div sx={{ alignItems: "center" }}>
+            {console.log(mutant)}
+            <p>Chosen metric: {getMetricText(metric)}</p>
+            <p>{getMetricText(metric)}: {metricValue}</p>
+        </div>
       </Container>
-      {/*Add extra data here, when we've arrived at the final screen. Like a download preview.*/}
     </Dialog>
   );
 }

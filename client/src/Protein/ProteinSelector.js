@@ -25,6 +25,8 @@ function ProteinSelector({ protein }) {
   const [index, setIndex] = useState(initialParams);
   const [residue, setResidue] = useState(initialParams);
   const [mode, setMode] = useState("insert");
+  const [metric, setMetric] = useState("lrc_dist");
+  const [metricValue, setMetricValue] = useState();
   const [residueOpen, setResidueOpen] = useState(false);
   const [mutant, setMutant] = useState();
   const navigate = useNavigate();
@@ -273,8 +275,10 @@ function ProteinSelector({ protein }) {
               protein={protein}
               stage="index"
               mode={mode}
+              metric={metric}
               handleIndexChange={handleIndexChange}
               handleResidueChange={handleResidueChange}
+              setMetricValue={setMetricValue}
             />
           )}
           <div style={{ marginTop: 16 }} />
@@ -334,6 +338,7 @@ function ProteinSelector({ protein }) {
         protein={protein}
         residue={residue}
         mode={mode}
+        metric={metric}
         index={index}
         handleChange={handleResTextChange}
         handleResidueChange={handleResidueChange}
@@ -341,7 +346,13 @@ function ProteinSelector({ protein }) {
         handleConfirm={handleResidueConfirm}
       />
       {mutant && (
-        <Mutant mutant={mutant} type={protein.type} handleClose={handleMutantClose} mode={mode} />
+        <Mutant mutant={mutant}
+          type={protein.type}
+          handleClose={handleMutantClose}
+          mode={mode}
+          metric={metric}
+          metricValue={metricValue}
+        />
       )}
       <MolstarViewer pdbStr={protein.wild_type.pdb_data.pdb} />
     </Container>
