@@ -14,11 +14,13 @@ export default function ResidueSelector({
   protein,
   handleClose,
   mode,
+  metric,
   index,
   residue,
   handleChange,
   handleConfirm,
   handleResidueChange,
+  setMetricValue,
 }) {
   return (
     <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -36,6 +38,7 @@ export default function ResidueSelector({
         <HeatmapMaker
           protein={protein}
           mode={mode}
+          metric={metric}
           index={index}
           stage="residue"
           handleResidueChange={handleResidueChange}

@@ -21,9 +21,11 @@ export default function HeatmapMaker({
   protein,
   stage,
   mode,
+  metric,
   index,
   handleIndexChange,
   handleResidueChange,
+  setMetricValue,
 }) {
   // stage prop is either "index" or "residue", indicating which heatmap to display
   // ONLY FOR PAIRWISE INSERT
@@ -74,7 +76,7 @@ export default function HeatmapMaker({
   useEffect(() => {
     let heatmapRequest = {
         pdb_id: protein.pdb_id,
-        metric: "lrc_dist",
+        metric: metric,
         mode: undefined,
         type: undefined,
         index: undefined //Only used if type is "resxres"
@@ -160,6 +162,7 @@ export default function HeatmapMaker({
   let squareClicked = (square) => {
     let column = square.value.key;
     let row = square.value.x;
+    setMetricValue(square.value.value);
     // X axis defaults to first text field, Y axis defaults to second
     if (protein.type === "single") {
       handleIndexChange(column);
