@@ -21,6 +21,7 @@ router.get("/get-basic-proteins", (req, res) => {
 router.post("/get-mutant", async (req, res) => {
   let { pdb_id, mode, type, index, residue } = req.body;
   // Residue must be undefined for delete operation, otherwise not found
+  console.log(req.body);
   residue = mode === "del" ? undefined : residue;
   try {
     let mutant;

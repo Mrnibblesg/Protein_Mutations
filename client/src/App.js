@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     const getProteins = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/get-basic-proteins");
+        const response = await axios.get("/api/get-basic-proteins");
         setProteins(response.data);
       } catch (error) {
         console.error(error);
