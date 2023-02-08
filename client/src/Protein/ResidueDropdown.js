@@ -1,6 +1,5 @@
-import { MenuItem, TextField, Typography } from "@mui/material";
-import { Box } from "@mui/system";
-import React, { useState } from "react";
+import { MenuItem, TextField } from "@mui/material";
+import React from "react";
 import residues from "../common/residues";
 
 export default function ResidueDropdown({ value, handleChange, placeholder }) {

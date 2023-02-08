@@ -1,10 +1,9 @@
-import { Box, ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 import "./App.css";
 import NavBar from "./NavBar";
-import Dashboard from "./Dashboard";
+import Dashboard from "./Dashboard/Dashboard";
 import theme from "./theme";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Info from "./InfoPage/Info";
 import References from "./InfoPage/References";
 import { useEffect, useState } from "react";
 import axios from "axios";

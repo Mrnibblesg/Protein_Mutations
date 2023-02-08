@@ -1,12 +1,4 @@
-import {
-  Button,
-  Container,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Container, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import ResidueSelector from "./ResidueSelector";
@@ -14,10 +6,10 @@ import HeatmapMaker from "./HeatmapMaker";
 import ResidueDropdown from "./ResidueDropdown";
 import { useNotification } from "../NotificationContext";
 import axios from "axios";
-import MolstarViewer from "../MolstarViewer";
+import MolstarViewer from "../Molstar/MolstarViewer";
 import Mutant from "./Mutant";
 import ModeRadio from "./ModeRadio";
-import { Routes, Route, useNavigate, useLocation, redirect } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 
 function ProteinSelector({ protein }) {
   const { setNotification } = useNotification();
@@ -340,7 +332,8 @@ function ProteinSelector({ protein }) {
         handleConfirm={handleResidueConfirm}
       />
       {mutant && (
-        <Mutant mutant={mutant}
+        <Mutant
+          mutant={mutant}
           type={protein.type}
           handleClose={handleMutantClose}
           mode={mode}

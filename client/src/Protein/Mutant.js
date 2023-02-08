@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import FileDownload from "js-file-download";
 import { AppBar, Box, Button, Dialog, IconButton, Slide, Toolbar, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import CloseIcon from "@mui/icons-material/Close";
-import MolstarViewer from "../MolstarViewer";
+import MolstarViewer from "../Molstar/MolstarViewer";
 import { findResidue } from "../common/residues";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -27,13 +27,13 @@ export default function Mutant({ mutant, handleClose, mode, type, metric, metric
     FileDownload(JSON.stringify(mutant), filename);
   };
   const getMetricText = (metric) => {
-    switch(metric){
+    switch (metric) {
       case "lrc_dist":
-      return "Least rigid cluster distance";
+        return "Least rigid cluster distance";
       default:
-      return "Unknown metric"
+        return "Unknown metric";
     }
-  }
+  };
 
   const title =
     type === "single"
@@ -71,9 +71,11 @@ export default function Mutant({ mutant, handleClose, mode, type, metric, metric
         {mutant && <MolstarViewer pdbStr={mutant.pdb_data?.pdb} mutant={mutant} />}
         {/* Maybe having loading thing when mutant is falsy */}
         <div sx={{ alignItems: "center" }}>
-            {console.log(mutant)}
-            <p>Chosen metric: {getMetricText(metric)}</p>
-            <p>{getMetricText(metric)}: {metricValue}</p>
+          {console.log(mutant)}
+          <p>Chosen metric: {getMetricText(metric)}</p>
+          <p>
+            {getMetricText(metric)}: {metricValue}
+          </p>
         </div>
       </Container>
     </Dialog>

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import ProteinCard from "./ProteinCard";
 import SearchIcon from "@mui/icons-material/Search";
-import axios from "axios";
 
 export default function Dashboard({ proteins }) {
   const [search, setSearch] = useState("");
