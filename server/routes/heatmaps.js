@@ -6,8 +6,9 @@ const router = express.Router();
 
 router.post("/get-heatmap", async (req, res) => {
   try {
-    const { pdb_id, type, index, mode } = req.body;
-    const heatmap = await Heatmap.findOne({ pdb_id, type, index, mode }).exec();
+    const { pdb_id, type, index, mode, metric } = req.body;
+    console.log(req.body);
+    const heatmap = await Heatmap.findOne({ pdb_id, type, index, mode, metric }).exec();
     res.status(200).json(heatmap);
   } catch (error) {
     console.error("Could not retrieve heatmap");
