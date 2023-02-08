@@ -73,36 +73,31 @@ export default function HeatmapMaker({
 
   useEffect(() => {
     let heatmapRequest = {
-        pdb_id: protein.pdb_id,
-        metric: "lrc_dist",
-        mode: undefined,
-        type: undefined,
-        index: undefined //Only used if type is "resxres"
+      pdb_id: protein.pdb_id,
+      metric: "lrc_dist",
+      mode: undefined,
+      type: undefined,
+      index: undefined, //Only used if type is "resxres"
     };
     if (protein.type === "single") {
       if (mode === "insert") {
         heatmapRequest.mode = "ins";
         heatmapRequest.type = "resxind";
-      } 
-      else {
+      } else {
         heatmapRequest.mode = "del";
         heatmapRequest.type = "ind";
       }
-    }
-    else {
+    } else {
       if (mode === "insert") {
         if (stage === "index") {
-        heatmapRequest.mode = "ins";
-        heatmapRequest.type = "indxind";
-            
-        }
-        else {
+          heatmapRequest.mode = "ins";
+          heatmapRequest.type = "indxind";
+        } else {
           heatmapRequest.mode = "ins";
           heatmapRequest.type = "resxres";
-          heatmapRequest.index = index.sort();
+          heatmapRequest.index = index.sort((a, b) => a - b);
         }
-      }
-      else {
+      } else {
         heatmapRequest.mode = "del";
         heatmapRequest.type = "indxind";
       }
@@ -112,34 +107,33 @@ export default function HeatmapMaker({
       setLoading(true);
       //console.log("Heatmap request: ");
       //console.log(heatmapRequest);
-      const DBHeatmapData = await axios.post("http://localhost:8080/api/heatmap/get-heatmap", heatmapRequest)
-      .then((resp) => {
-        //console.log("Response: ");
-        //console.log(resp);
-        setData(constructData(resp.data.heatmap));
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error); 
-      });
+      const DBHeatmapData = await axios
+        .post("/api/heatmap/get-heatmap", heatmapRequest)
+        .then((resp) => {
+          //console.log("Response: ");
+          //console.log(resp);
+          setData(constructData(resp.data.heatmap));
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     };
     fetchHeatmap();
-
   }, [mode, index]);
 
   //Constructs data from what the proper labels for each axis is, and the heat data inside of protein.
   let constructData = (heatmap) => {
     let data = [];
-    
+
     if (!heatmap) {
-        console.log("Heatmap is null");
+      console.log("Heatmap is null");
       return null;
     }
 
     for (let i = 0; i < xAxisCount; i++) {
       let column = { key: xAxis[i], data: [] };
       for (let j = 0; j < yAxisCount; j++) {
-
         let heat = heatmap[j][i];
         let square = { key: yAxis[j], data: heat };
 
@@ -238,7 +232,7 @@ export default function HeatmapMaker({
         yAxisCount = heatMapSize;
       }
     }
-  }
+  };
 
   getAxes();
 
@@ -246,52 +240,53 @@ export default function HeatmapMaker({
     <Box id="mainHeatmapContainer" display="flex" alignItems="center">
       {!loading ? (
         data ? (
-        <>
-          <Heatmap
-            height={25 * (yAxisCount+1)+9}
-            width={25 * (xAxisCount+1)}
-            data={data}
-            data-testid="heatmap"
-            xAxis={
-              <LinearXAxis
-                type="category"
-                axisLine={null}
-                tickSeries={
-                  <LinearXAxisTickSeries
-                    line={<LinearAxisTickLine strokeWidth={0} size={14} />}
-                    label={<LinearXAxisTickLabel padding={5} />}
-                  />
-                }
-              />
-            }
-            series={
-              <HeatmapSeries
-                colorScheme={heatmapColorScheme}
-                emptyColor={"#000000"}
-                padding={0.0001} //A value of 0 defaults to 0.1. So set it close to 0
-                cell={
-                  <HeatmapCell
-                    style={{ stroke: "rgba(0,0,0,0)" }}
-                    rx={0}
-                    onClick={(event) => {
-                      squareClicked(event);
-                    }}
-                    tooltip={<ChartTooltip color={"rgb(255,0,0,0.5)"} />}
-                  />
-                }
-              />
-            }
-          />
-          <SequentialLegend
-            colorScheme={heatmapColorScheme}
-            data={data}
-            style={{ height: 25 * (yAxisCount - 1), marginLeft: "10px", minHeight: 100 }}
-          />
-        </>
+          <>
+            <Heatmap
+              height={25 * (yAxisCount + 1) + 9}
+              width={25 * (xAxisCount + 1)}
+              data={data}
+              data-testid="heatmap"
+              xAxis={
+                <LinearXAxis
+                  type="category"
+                  axisLine={null}
+                  tickSeries={
+                    <LinearXAxisTickSeries
+                      line={<LinearAxisTickLine strokeWidth={0} size={14} />}
+                      label={<LinearXAxisTickLabel padding={5} />}
+                    />
+                  }
+                />
+              }
+              series={
+                <HeatmapSeries
+                  colorScheme={heatmapColorScheme}
+                  emptyColor={"#000000"}
+                  padding={0.0001} //A value of 0 defaults to 0.1. So set it close to 0
+                  cell={
+                    <HeatmapCell
+                      style={{ stroke: "rgba(0,0,0,0)" }}
+                      rx={0}
+                      onClick={(event) => {
+                        squareClicked(event);
+                      }}
+                      tooltip={<ChartTooltip color={"rgb(255,0,0,0.5)"} />}
+                    />
+                  }
+                />
+              }
+            />
+            <SequentialLegend
+              colorScheme={heatmapColorScheme}
+              data={data}
+              style={{ height: 25 * (yAxisCount - 1), marginLeft: "10px", minHeight: 100 }}
+            />
+          </>
         ) : (
           <Typography variant="h4" gutterBottom>
             There was an error loading the heatmap, try a different protein (1l2y, probably)
-          </Typography> )
+          </Typography>
+        )
       ) : (
         <Typography variant="h4" gutterBottom>
           Loading...

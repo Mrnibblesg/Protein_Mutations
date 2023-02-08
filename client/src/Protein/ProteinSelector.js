@@ -89,10 +89,8 @@ function ProteinSelector({ protein }) {
       setTimeout(() => {
         // Navigate to protein page if possible, otherwise dashboard
         if (urlPdbId && urlType) {
-          console.log("Here 1");
           navigate(`/${urlPdbId}/${urlType}`);
         } else {
-          console.log("Here 2");
           navigate("/");
         }
       }, 2500);
@@ -136,15 +134,14 @@ function ProteinSelector({ protein }) {
 
   // Returns true if in bounds, false if not
   const checkBound = (index) => {
-      let upperLimit = protein.residue_count;
-      if (protein.type != "single"){
-          if (mode === "insert"){
-              upperLimit += 1;
-          }
-          else{
-              upperLimit -= 1;
-          }
+    let upperLimit = protein.residue_count;
+    if (protein.type != "single") {
+      if (mode === "insert") {
+        upperLimit += 1;
+      } else {
+        upperLimit -= 1;
       }
+    }
     return index >= 1 && index <= upperLimit;
   };
   // Confirm navigation to next stage, locks in index/residue
@@ -211,7 +208,7 @@ function ProteinSelector({ protein }) {
   };
   // IIFE for creating mutant url
   const mutantUrl = (() => {
-    const orderedIndex = index instanceof Array ? [...index].sort() : index;
+    const orderedIndex = index instanceof Array ? [...index].sort((a, b) => a - b) : index;
     let url = `/${protein.pdb_id}/${protein.type}/${mode}/`;
     if (mode === "insert") {
       if (protein.type === "pairwise") {
@@ -232,8 +229,8 @@ function ProteinSelector({ protein }) {
   const getMutant = async (mode, index, residue) => {
     try {
       // Order indexes because database always has lower index first
-      const orderedIndex = index instanceof Array ? index.sort() : index;
-      const response = await axios.post("http://localhost:8080/api/get-mutant", {
+      const orderedIndex = index instanceof Array ? index.sort((a, b) => a - b) : index;
+      const response = await axios.post("/api/get-mutant", {
         pdb_id: protein.pdb_id,
         mode: mode === "insert" ? "ins" : "del",
         type: protein.type,
@@ -241,7 +238,6 @@ function ProteinSelector({ protein }) {
         index: orderedIndex,
         residue,
       });
-
       setMutant(response.data);
     } catch (error) {
       console.error(error);
@@ -294,7 +290,6 @@ function ProteinSelector({ protein }) {
                 <TextField
                   value={index[0]}
                   onChange={(e) => {
-                    console.log("here 0");
                     handleIndexChange(e.target.value, 0);
                   }}
                   inputProps={{ "data-testid": "indexTextField" }}
@@ -305,7 +300,6 @@ function ProteinSelector({ protein }) {
                 <TextField
                   value={index[1]}
                   onChange={(e) => {
-                    console.log("here 1");
                     handleIndexChange(e.target.value, 1);
                   }}
                   inputProps={{ "data-testid": "indexTextField" }}
