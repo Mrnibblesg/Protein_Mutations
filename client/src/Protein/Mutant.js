@@ -71,7 +71,6 @@ export default function Mutant({ mutant, handleClose, mode, type, metric, metric
         {mutant && <MolstarViewer pdbStr={mutant.pdb_data?.pdb} mutant={mutant} />}
         {/* Maybe having loading thing when mutant is falsy */}
         <div sx={{ alignItems: "center" }}>
-          {console.log(mutant)}
           <p>Chosen metric: {getMetricText(metric)}</p>
           <p>
             {getMetricText(metric)}: {metricValue}
