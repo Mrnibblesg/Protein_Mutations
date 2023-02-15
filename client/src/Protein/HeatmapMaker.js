@@ -10,10 +10,14 @@ import {
   LinearXAxis,
   LinearXAxisTickSeries,
   LinearAxisTickLine,
+  LinearYAxis,
+  LinearYAxisTickSeries,
+  LinearYAxisTickLabel,
 } from "reaviz";
 import { shortResidues as residues } from "../common/residues";
 import axios from "axios";
 import { Typography } from "@mui/material";
+import { useNotification } from "../NotificationContext";
 
 // Generate heatmap based on type of protein and mode
 // Assume heatmap data is stored within protein
@@ -30,7 +34,7 @@ export default function HeatmapMaker({
   // stage prop is either "index" or "residue", indicating which heatmap to display
   // ONLY FOR PAIRWISE INSERT
   // "index" indicates that the heatmap should have insert index on both axes, residues for "residue"
-
+  const { setNotification } = useNotification();
   const heatmapColorScheme = [
     "#570000",
     "#650000",
@@ -107,18 +111,16 @@ export default function HeatmapMaker({
 
     const fetchHeatmap = async () => {
       setLoading(true);
-      //console.log("Heatmap request: ");
-      //console.log(heatmapRequest);
-      const DBHeatmapData = await axios
+      axios
         .post("/api/heatmap/get-heatmap", heatmapRequest)
         .then((resp) => {
-          //console.log("Response: ");
-          //console.log(resp);
           setData(constructData(resp.data.heatmap));
           setLoading(false);
         })
         .catch((error) => {
-          console.log(error);
+          setNotification("Heatmap not found in database");
+          console.error(error);
+          setLoading(false);
         });
     };
     fetchHeatmap();
@@ -256,7 +258,19 @@ export default function HeatmapMaker({
                   tickSeries={
                     <LinearXAxisTickSeries
                       line={<LinearAxisTickLine strokeWidth={0} size={14} />}
-                      label={<LinearXAxisTickLabel padding={5} />}
+                      label={<LinearXAxisTickLabel padding={5} fill="black" />}
+                    />
+                  }
+                />
+              }
+              yAxis={
+                <LinearYAxis
+                  type="category"
+                  axisLine={null}
+                  tickSeries={
+                    <LinearYAxisTickSeries
+                      line={<LinearAxisTickLine strokeWidth={0} size={14} />}
+                      label={<LinearYAxisTickLabel fill="black" />}
                     />
                   }
                 />
@@ -287,7 +301,7 @@ export default function HeatmapMaker({
           </>
         ) : (
           <Typography variant="h4" gutterBottom>
-            There was an error loading the heatmap, try a different protein (1l2y, probably)
+            Unable to load heatmap. Likely not yet in the database.
           </Typography>
         )
       ) : (
