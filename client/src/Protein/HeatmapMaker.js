@@ -81,6 +81,7 @@ export default function HeatmapMaker({
     let heatmapRequest = {
       pdb_id: protein.pdb_id,
       metric: metric,
+      agg_method: "avg", //Currently hard coded
       mode: undefined,
       type: undefined,
       index: undefined, //Only used if type is "resxres"
