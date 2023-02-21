@@ -42,6 +42,7 @@ export default function ResidueSelector({
           index={index}
           stage="residue"
           handleResidueChange={handleResidueChange}
+          setMetricValue={setMetricValue}
         />
         <Box display="flex" mt={2}>
           <ResidueDropdown
