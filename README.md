@@ -29,3 +29,7 @@ _not implemented yet_
 `cd server`
 
 `npm test`
+
+
+This repository contains the unfinished version of this application. The project continues on at https://github.com/Jasonl2398/Protein_Mutations however at this point, even the continuation is inactive.
+This repository is archived as of 6/18/2024.
